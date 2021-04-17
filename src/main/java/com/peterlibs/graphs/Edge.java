@@ -1,4 +1,11 @@
 package com.peterlibs.graphs;
 
-public class Edge {
+import java.io.Serializable;
+
+public class Edge implements Serializable {
+    /*
+    - Allow edges to have a direction.
+    - Allow edges to have labels.
+    - Allow edges to have weights.
+     */
 }
