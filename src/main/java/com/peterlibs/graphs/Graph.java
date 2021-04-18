@@ -1,7 +1,7 @@
 package com.peterlibs.graphs;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Class for a Graph, which will store a map of Nodes connected by Edges
@@ -9,17 +9,18 @@ import java.util.ArrayList;
 public class Graph implements Serializable {
 
     /*
-     *
+     * Instance variables, for recording the vertices and edges in this graph.
+     * Constructor, for creating a new graph.
      */
-    //
-    //
-
+    ArrayList<Vertex> vertices;
+    ArrayList<Edge> edges;
 
     /**
      * Constructor for a new, empty Graph
      */
     public Graph () {
-        /**/
+        this.vertices = new ArrayList<>();
+        this.edges = new ArrayList<>();
     }
 
 
@@ -29,6 +30,14 @@ public class Graph implements Serializable {
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      */
 
+    /**
+     *
+     * @return
+     */
+    public Vertex getVertex(String vertexName) {
+        /**/
+        return null;
+    }
     /**
      *
      * @return
