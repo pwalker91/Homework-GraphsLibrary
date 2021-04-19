@@ -4,39 +4,35 @@ import java.io.Serializable;
 
 class Edge implements Serializable {
 
-    /*
-     * Instance variables, for recording the vertices and edges in this graph.
-     * Constructor, for creating a new graph.
-     */
+    //Instance variables, for recording the vertices this Edge is connecting, identifying
+    // which vertex is the START and which is the END.
+    //An Edge can also have a weight
     private Vertex vertexStart;
     private Vertex vertexEnd;
     private int weight;
     private String label;
 
     /**
-     * Constructor for a new Edge in a Graph
+     * Constructor for a new Edge in the Graph
      * @param vertexStart : The Vertex this Edge starts at.
      * @param vertexEnd : The Vertex this Edge ends at.
      * @param weight : [optional] The weight (or cost) of the edge. Defaults to '0'.
      * @param label : [optional] The pretty name for the Edge. Defaults to 'label'.
      */
-    public Edge (Vertex vertexStart, Vertex vertexEnd, int weight, String label) {
-        this.vertexStart = vertexStart;
-        this.vertexEnd = vertexEnd;
-        this.label = label;
-        if (weight < 0) {
-            throw new IllegalArgumentException("An edge cannot have a weight less than 0.");
-        }
-        this.weight = weight;
+    Edge (Vertex vertexStart, Vertex vertexEnd, int weight, String label) {
+        this.setLabel(label);
+        this.setWeight(weight);
+        this.setVertexStart(vertexStart);
+        this.setVertexStart(vertexEnd);
     }
-    public Edge (Vertex vertexStart, Vertex vertexEnd, String label) {
-        this(vertexStart, vertexEnd, 0, label);
+    Edge (Vertex vertexStart, Vertex vertexEnd, String label) {
+        this(vertexStart, vertexEnd, Graph.EDGE_DEFAULT_WEIGHT, label);
     }
-    public Edge (Vertex vertexStart, Vertex vertexEnd, int weight) {
-        this(vertexStart, vertexEnd, weight, "label");
+    Edge (Vertex vertexStart, Vertex vertexEnd, int weight) {
+        this(vertexStart, vertexEnd, weight, Graph.EDGE_DEFAULT_LABEL);
     }
-    public Edge (Vertex vertexStart, Vertex vertexEnd) {
-        this(vertexStart, vertexEnd, 0, "label");
+    Edge (Vertex vertexStart, Vertex vertexEnd) {
+        this(vertexStart, vertexEnd, Graph.EDGE_DEFAULT_WEIGHT, Graph.EDGE_DEFAULT_LABEL);
     }
 
 
@@ -45,23 +41,20 @@ class Edge implements Serializable {
      * Simple Getters and Setters for the created Edge
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      */
-    public String getLabel() { return this.label; }
-    public void setLabel(String newLabel) { this.label = newLabel; }
 
-    public int getWeight() { return this.weight; }
-    public void setWeight(int newWeight) { this.weight = newWeight; }
+    String getLabel() { return this.label; }
+    void setLabel(String newLabel) { this.label = newLabel; }
 
-    public Vertex getVertexStart() { return this.vertexStart; }
     public void setVertexStart(Vertex newVertex) { this.vertexStart = newVertex; }
-    public Vertex getVertexEnd() { return this.vertexEnd; }
     public void setVertexEnd(Vertex newVertex) { this.vertexEnd = newVertex; }
-    /**
-     * Changes the "direction" of this vertex, swapping the Start and End Vertices.
-     */
-    public void reverseDirection() {
-        Vertex tmp = this.vertexStart;
-        this.vertexStart = this.vertexEnd;
-        this.vertexEnd = tmp;
+    int getWeight() { return this.weight; }
+    void setWeight(int newWeight) {
+        if (weight < 0)
+            throw new IllegalArgumentException("An edge cannot have a weight less than 0.");
+        this.weight = newWeight;
     }
+
+    Vertex getVertexStart() { return this.vertexStart; }
+    Vertex getVertexEnd() { return this.vertexEnd; }
 
 }

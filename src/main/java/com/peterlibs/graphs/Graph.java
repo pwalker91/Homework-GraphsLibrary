@@ -9,8 +9,9 @@ import java.util.*;
 public class Graph implements Serializable {
 
     //Static variables for some of the stuff I don't want to keep typing
-    private static final int EDGE_DEFAULT_WEIGHT = 0;
-    private static final String EDGE_DEFAULT_LABEL = "An Edge";
+    static final int EDGE_DEFAULT_WEIGHT = 0;
+    static final String EDGE_DEFAULT_LABEL = "An Edge";
+    static final String VERTEX_DEFAULT_LABEL = "label";
     //Instance variables, for recording the vertices and edges in this graph
     ArrayList<Vertex> vertices;
     ArrayList<Edge> edges;
