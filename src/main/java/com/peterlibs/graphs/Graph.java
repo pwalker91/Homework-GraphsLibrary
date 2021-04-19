@@ -13,8 +13,8 @@ public class Graph implements Serializable {
     static final String EDGE_DEFAULT_LABEL = "An Edge";
     static final String VERTEX_DEFAULT_LABEL = "label";
     //Instance variables, for recording the vertices and edges in this graph
-    ArrayList<Vertex> vertices;
-    ArrayList<Edge> edges;
+    private final ArrayList<Vertex> vertices;
+    private final ArrayList<Edge> edges;
 
     /**
      * Constructor for a new, empty Graph
@@ -32,45 +32,7 @@ public class Graph implements Serializable {
      */
 
     /**
-     * Gets a Vertex by its name.
-     * @param vertexName : The name of the Vertex to search for
-     * @return A Vertex object if it exists, otherwise, null
-     */
-    public Vertex getVertex(String vertexName) {
-        /**/
-        return null;
-    }
-    /**
-     * Creates a new Vertex in the graph with the given Name.
-     * @param vertexName : The name of the Vertex. Must be UNIQUE
-     * @return The Vertex object that was created
-     * @throws IllegalArgumentException : The given Name for the new Vertex already exists
-     */
-    public Vertex addVertex(String vertexName) {
-        //test is vertex name is unique
-            //if not, throw exception
-        if (false) {
-            throw new IllegalArgumentException("A Vertex with this name already exists.");
-        }
-        return null;
-    }
-    /**
-     * Remove a Vertex from the Graph by providing the Vertex object.
-     * @param vertex : The Vertex object to remove from the Graph
-     * @throws IllegalArgumentException : The given Vertex does not exist in the Graph
-     */
-    public void removeVertex(Vertex vertex) {
-        /**/
-        throw new IllegalArgumentException("This vertex does not exist in the Graph.");
-    }
-    //What I'd like to do here is have the return of removing a Vertex also return a
-    //Hashmap that could be used to re-insert the Vertex (if it was removed incorrectly).
-    //I don't quite have the time to really flesh this out, so I'll leave it here as a stub
-    //to get to later.
-//    public HashMap<String, HashMap<String,Object>> removeVertex(Vertex vertex) {}
-
-    /**
-     *
+     * Adds an Edge to the Graph, linking the two specified Vertex objects.
      * @param vertexStart : The starting point of the Edge being created
      * @param vertexEnd : The end point of the Edge being created
      * @param label : [optional] The label for the Edge. Defaults to "An Edge"
@@ -87,6 +49,7 @@ public class Graph implements Serializable {
             theEdge = new Edge(vertexStart, vertexEnd, weight, label);
             vertexStart.addEdge(theEdge);
         }
+        this.edges.add(theEdge);
         return theEdge;
     }
     public Edge addEdge(Vertex vertexStart, Vertex vertexEnd, String label) {
@@ -98,25 +61,82 @@ public class Graph implements Serializable {
     public Edge addEdge(Vertex vertexStart, Vertex vertexEnd) {
         return this.addEdge(vertexStart, vertexEnd, EDGE_DEFAULT_WEIGHT, EDGE_DEFAULT_LABEL);
     }
+    /**
+     * Safely removes the Edge from the Graph.
+     * @param theEdge : The Edge object we will remove, if it exists in the graph
+     */
+    public void removeEdge(Edge theEdge) {
+        boolean found = false;
+        for (Edge anEdge: this.edges) {
+            if (anEdge == theEdge) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            throw new IllegalArgumentException("This edge does not exist in the Graph.");
+        }
+        //To safely remove the Edge from the graph, we need to make sure that no vertices
+        // have any references to the Edge and that the Edge has no references to any vertices.
+        // Then we can safely remove the Edge from our Graph and the garbage collector should
+        // clean up our memory.
+        theEdge.getVertexStart().getEdges().remove(theEdge);
+        theEdge.getVertexEnd().getEdges().remove(theEdge);
+        theEdge.setVertexStart(null);
+        theEdge.setVertexEnd(null);
+        this.edges.remove(theEdge);
+    }
 
     /**
-     *
-     * @param edge
-     * @return
+     * Gets a Vertex by its name.
+     * @param vertexName : The name of the Vertex to search for
+     * @return A Vertex object if it exists, otherwise, null
      */
-    public Vertex removeEdge(Edge edge) {
-        /**/
+    public Vertex getVertex(String vertexName) {
+        for (Vertex aVertex: this.vertices) {
+            if (aVertex.getLabel().equals(vertexName)) {
+                return aVertex;
+            }
+        }
         return null;
     }
     /**
-     *
-     * @param edgeLabel
-     * @return
+     * Creates a new Vertex in the graph with the given Name.
+     * @param newVertexName : The name of the Vertex. Must be UNIQUE
+     * @return The Vertex object that was created
+     * @throws IllegalArgumentException : The given Name for the new Vertex already exists
      */
-    public Vertex removeEdge(String edgeLabel) {
-        /**/
-        return null;
+    public Vertex addVertex(String newVertexName) {
+        Vertex newVertex = this.getVertex(newVertexName);
+        if (newVertex != null) {
+            throw new IllegalArgumentException("A Vertex with this name already exists.");
+        }
+        newVertex = new Vertex();
+        this.vertices.add(newVertex);
+        return newVertex;
     }
+    /**
+     * Remove a Vertex from the Graph by providing the Vertex object.
+     * @param vertexName : The Name of the Vertex to remove from the Graph.
+     * @throws IllegalArgumentException : The given Vertex does not exist in the Graph
+     */
+    public void removeVertex(String vertexName) {
+        Vertex foundVertex = this.getVertex(vertexName);
+        if (foundVertex == null) {
+            throw new IllegalArgumentException("This vertex does not exist in the Graph.");
+        }
+        for (Edge anEdge: this.edges) {
+            if (anEdge.getVertexStart() == foundVertex || anEdge.getVertexEnd() == foundVertex) {
+                this.removeEdge(anEdge);
+            }
+        }
+        this.vertices.remove(foundVertex);
+    }
+    //What I'd like to do here is have the return of removing a Vertex also return a
+    // Hashmap that could be used to re-insert the Vertex (if it was removed incorrectly).
+    // I don't quite have the time to really flesh this out, so I'll leave it here as a stub
+    // to get to later.
+//    public HashMap<String, HashMap<String,Object>> removeVertex(Vertex vertex) {}
 
 
     /*
@@ -126,10 +146,14 @@ public class Graph implements Serializable {
      */
 
     /**
-     *
-     * @param vertexStart
-     * @param vertexEnd
-     * @return
+     * Find all possible paths from the Vertex A to Vertex B, regardless of cost and
+     * without using the same Vertex twice.
+     * @param vertexStart : The starting point of our path search
+     * @param vertexEnd : The Vertex we wish to reach
+     * @return An ArrayList of ArrayList of Vertex objects.
+     *         Each embedded ArrayList represents a path, where the first Vertex is our
+     *         starting point, and the final Vertex is our destination.
+     * @throws RuntimeException, when no paths could be found
      */
     public ArrayList<ArrayList<Vertex>> findAllPaths(Vertex vertexStart, Vertex vertexEnd) {
         return null;
@@ -137,9 +161,9 @@ public class Graph implements Serializable {
 
     /**
      *
-     * @param vertexStart
-     * @param vertexEnd
-     * @return
+     * @param vertexStart : The starting point of our path search
+     * @param vertexEnd : The Vertex we wish to reach
+     * @return An ArrayList of Vertex objects, the shortest path from Vertex A to Vertex B
      */
     public ArrayList<Vertex> findShortestPath(Vertex vertexStart, Vertex vertexEnd) {
         return null;
@@ -147,9 +171,9 @@ public class Graph implements Serializable {
 
     /**
      *
-     * @param vertexStart
-     * @param vertexEnd
-     * @return
+     * @param vertexStart : The starting point of our path search
+     * @param vertexEnd : The Vertex we wish to reach
+     * @return An ArrayList of Vertex objects, the longest path from Vertex A to Vertex B
      */
     public ArrayList<Vertex> findLongestPath(Vertex vertexStart, Vertex vertexEnd) {
         return null;
@@ -169,4 +193,5 @@ public class Graph implements Serializable {
         get_edge_value(G, x, y): returns the value associated with the edge (x, y);
         set_edge_value(G, x, y, v): sets the value associated with the edge (x, y) to v.
      */
+
 }
