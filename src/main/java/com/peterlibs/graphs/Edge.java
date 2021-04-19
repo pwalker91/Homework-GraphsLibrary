@@ -45,8 +45,6 @@ class Edge implements Serializable {
     String getLabel() { return this.label; }
     void setLabel(String newLabel) { this.label = newLabel; }
 
-    public void setVertexStart(Vertex newVertex) { this.vertexStart = newVertex; }
-    public void setVertexEnd(Vertex newVertex) { this.vertexEnd = newVertex; }
     int getWeight() { return this.weight; }
     void setWeight(int newWeight) {
         if (weight < 0)
@@ -55,6 +53,8 @@ class Edge implements Serializable {
     }
 
     Vertex getVertexStart() { return this.vertexStart; }
+    protected void setVertexStart(Vertex newVertex) { this.vertexStart = newVertex; }
     Vertex getVertexEnd() { return this.vertexEnd; }
+    protected void setVertexEnd(Vertex newVertex) { this.vertexEnd = newVertex; }
 
 }
