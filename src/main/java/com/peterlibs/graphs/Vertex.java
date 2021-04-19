@@ -5,19 +5,21 @@ import java.util.ArrayList;
 
 class Vertex implements Serializable {
 
-    /*
-     * Instance variables, for recording the edges this Vertex is incident to, specifically
-     * where this is the STARTING vertex in the incident pair.
-     * Constructor, for creating a new vertex.
-     */
+    //Instance variables, for recording the edges this Vertex is incident to, specifically
+    // where this is the STARTING vertex in the incident pair.
     private final ArrayList<Edge> edges;
     private String label;
 
     /**
-     * Constructor for a new, empty Graph
+     * Constructor for a new Vertex in the Graph
+     * @param label : [optional] The name of the Vertex in the Graph
      */
-    public Vertex () {
+    Vertex (String label) {
         this.edges = new ArrayList<>();
+        this.setLabel(label);
+    }
+    Vertex () {
+        this(Graph.VERTEX_DEFAULT_LABEL);
     }
 
 
@@ -27,20 +29,23 @@ class Vertex implements Serializable {
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      */
 
-    /**
-     * Adds a new Edge to this Vertex. By adding an edge
-     * @param newEdge
-     */
-    public void addEdge(Edge newEdge) {
+    String getLabel() { return label; }
+    void setLabel(String label) { this.label = label; }
+
+    protected ArrayList<Edge> getEdges() { return this.edges; }
+    protected void addEdge(Edge newEdge) {
+        if (newEdge == null)
+            throw new IllegalArgumentException("Cannot add a null Edge object.");
         this.edges.add(newEdge);
     }
+    protected void removeEdge(Edge anEdge) { this.edges.remove(anEdge); }
 
     /**
      * Gets the Edge that connects this Vertex to the specified Vertex (if it exists).
      * @param destinationVertex : Vertex object
      * @return An Edge object if it exists, otherwise, null
      */
-    public Edge getEdgeToVertex(Vertex destinationVertex) {
+    Edge getEdgeToVertex(Vertex destinationVertex) {
         for (Edge anEdge: this.edges) {
             if (anEdge.getVertexEnd() == destinationVertex) {
                 return anEdge;
@@ -48,4 +53,5 @@ class Vertex implements Serializable {
         }
         return null;
     }
+
 }
