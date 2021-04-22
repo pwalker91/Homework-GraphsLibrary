@@ -1,9 +1,11 @@
 package com.peterlibs.graphs;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 
 class Edge implements Serializable {
 
+    static final Logger logger = Logger.getLogger(Edge.class.getName());
     //Instance variables, for recording the vertices this Edge is connecting, identifying
     // which vertex is the START and which is the END.
     //An Edge can also have a weight

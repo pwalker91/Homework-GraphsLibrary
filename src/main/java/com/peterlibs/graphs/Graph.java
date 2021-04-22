@@ -2,12 +2,14 @@ package com.peterlibs.graphs;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Class for a Graph, which will store a map of Nodes connected by Edges
  */
 public class Graph implements Serializable {
 
+    static final Logger logger = Logger.getLogger(Graph.class.getName());
     //Static variables for some of the stuff I don't want to keep typing
     static final int EDGE_DEFAULT_WEIGHT = 0;
     static final String EDGE_DEFAULT_LABEL = "An Edge";
@@ -156,6 +158,7 @@ public class Graph implements Serializable {
      * @throws RuntimeException, when no paths could be found
      */
     public ArrayList<ArrayList<Vertex>> findAllPaths(Vertex vertexStart, Vertex vertexEnd) {
+        //TODO: implement
         return null;
     }
 
@@ -166,6 +169,7 @@ public class Graph implements Serializable {
      * @return An ArrayList of Vertex objects, the shortest path from Vertex A to Vertex B
      */
     public ArrayList<Vertex> findShortestPath(Vertex vertexStart, Vertex vertexEnd) {
+        //TODO: implement
         return null;
     }
 
@@ -176,6 +180,7 @@ public class Graph implements Serializable {
      * @return An ArrayList of Vertex objects, the longest path from Vertex A to Vertex B
      */
     public ArrayList<Vertex> findLongestPath(Vertex vertexStart, Vertex vertexEnd) {
+        //TODO: implement
         return null;
     }
 

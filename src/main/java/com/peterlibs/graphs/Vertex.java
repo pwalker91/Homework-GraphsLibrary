@@ -2,9 +2,11 @@ package com.peterlibs.graphs;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 class Vertex implements Serializable {
 
+    static final Logger logger = Logger.getLogger(Vertex.class.getName());
     //Instance variables, for recording the edges this Vertex is incident to, specifically
     // where this is the STARTING vertex in the incident pair.
     private final ArrayList<Edge> edges;
