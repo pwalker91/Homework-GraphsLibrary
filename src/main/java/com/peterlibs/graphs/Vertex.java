@@ -38,6 +38,8 @@ class Vertex implements Serializable {
     protected void addEdge(Edge newEdge) {
         if (newEdge == null)
             throw new IllegalArgumentException("Cannot add a null Edge object.");
+        if (newEdge.getVertexStart() != this)
+            throw new IllegalArgumentException("The Edge does not have this Vertex as its starting vertex.");
         this.edges.add(newEdge);
     }
     protected void removeEdge(Edge anEdge) { this.edges.remove(anEdge); }
