@@ -14,16 +14,16 @@ public class Graph implements Serializable {
     static final int EDGE_DEFAULT_WEIGHT = 0;
     static final String EDGE_DEFAULT_LABEL = "An Edge";
     static final String VERTEX_DEFAULT_LABEL = "label";
-    //Instance variables, for recording the vertices and edges in this graph
+    //Instance variables, for recording the vertices in this graph.
+    // We do not need to maintain a list of edges, since that will exist within
+    // each Vertex object.
     private final ArrayList<Vertex> vertices;
-    private final ArrayList<Edge> edges;
 
     /**
      * Constructor for a new, empty Graph
      */
     public Graph () {
         this.vertices = new ArrayList<>();
-        this.edges = new ArrayList<>();
     }
 
 
@@ -51,7 +51,6 @@ public class Graph implements Serializable {
             theEdge = new Edge(vertexStart, vertexEnd, weight, label);
             vertexStart.addEdge(theEdge);
         }
-        this.edges.add(theEdge);
         return theEdge;
     }
     public Edge addEdge(Vertex vertexStart, Vertex vertexEnd, String label) {
@@ -67,17 +66,16 @@ public class Graph implements Serializable {
      * Safely removes the Edge from the Graph.
      * @param theEdge : The Edge object we will remove, if it exists in the graph
      */
-    public void removeEdge(Edge theEdge) {
-        boolean found = false;
-        for (Edge anEdge: this.edges) {
-            if (anEdge == theEdge) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
+    public void removeEdge(String vertexStartName, String vertexEndName) {
+        Vertex vertexStart = this.getVertex(vertexStartName);
+        Vertex vertexEnd = this.getVertex(vertexEndName);
+        Edge theEdge = vertexStart.getEdgeToVertex(vertexEnd);
+        if (theEdge == null) {
             throw new IllegalArgumentException("This edge does not exist in the Graph.");
         }
+        this.removeEdge(theEdge);
+    }
+    private void removeEdge(Edge theEdge) {
         //To safely remove the Edge from the graph, we need to make sure that no vertices
         // have any references to the Edge and that the Edge has no references to any vertices.
         // Then we can safely remove the Edge from our Graph and the garbage collector should
@@ -86,7 +84,6 @@ public class Graph implements Serializable {
         theEdge.getVertexEnd().getEdges().remove(theEdge);
         theEdge.setVertexStart(null);
         theEdge.setVertexEnd(null);
-        this.edges.remove(theEdge);
     }
 
     /**
