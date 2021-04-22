@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 
-class EdgeTest {
+class VertexTest {
 
     @Test
     void getLabel() {
@@ -15,26 +15,18 @@ class EdgeTest {
     }
 
     @Test
-    void getWeight() {
+    void getEdges() {
     }
 
     @Test
-    void setWeight() {
+    void addEdge() {
     }
 
     @Test
-    void getVertexStart() {
+    void removeEdge() {
     }
 
     @Test
-    void setVertexStart() {
-    }
-
-    @Test
-    void getVertexEnd() {
-    }
-
-    @Test
-    void setVertexEnd() {
+    void getEdgeToVertex() {
     }
 }
