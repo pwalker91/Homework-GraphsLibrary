@@ -34,14 +34,39 @@ public class Graph implements Serializable {
      */
 
     /**
+     * Attempts to find the Edge that exists between the two given Vertices
+     * @param vertexStartName : The name of the vertex that this edge starts at
+     * @param vertexEndName : The name of the vertex that this edge ends at
+     * @return Edge object, a reference to the Edge in the graph.
+     *          Returns null if the Edge is not found
+     */
+    public Edge getEdge(String vertexStartName, String vertexEndName) {
+        Vertex vertexStart = this.getVertex(vertexStartName);
+        Vertex vertexEnd = this.getVertex(vertexEndName);
+        return vertexStart.getEdgeToVertex(vertexEnd);
+    }
+    /**
+     * Gets the number of edges in the Graph, in total
+     * @return Integer, the number of edges that have been added to this Graph
+     */
+    public int getNumberOfEdges() {
+        int totalEdges = 0;
+        for (Vertex aVertex: this.vertices) {
+            totalEdges += aVertex.getEdges().size();
+        }
+        return totalEdges;
+    }
+    /**
      * Adds an Edge to the Graph, linking the two specified Vertex objects.
-     * @param vertexStart : The starting point of the Edge being created
-     * @param vertexEnd : The end point of the Edge being created
+     * @param vertexStartName : The starting point of the Edge being created
+     * @param vertexEndName : The end point of the Edge being created
      * @param label : [optional] The label for the Edge. Defaults to "An Edge"
      * @param weight : [optional] The weight of the Edge. Default to '0'
      * @return The Edge object that was created
      */
-    public Edge addEdge(Vertex vertexStart, Vertex vertexEnd, int weight, String label) {
+    public Edge addEdge(String vertexStartName, String vertexEndName, int weight, String label) {
+        Vertex vertexStart = this.getVertex(vertexStartName);
+        Vertex vertexEnd = this.getVertex(vertexEndName);
         Edge theEdge = vertexStart.getEdgeToVertex(vertexEnd);
         if (theEdge != null) {
             theEdge.setWeight(weight);
@@ -53,18 +78,19 @@ public class Graph implements Serializable {
         }
         return theEdge;
     }
-    public Edge addEdge(Vertex vertexStart, Vertex vertexEnd, String label) {
-        return this.addEdge(vertexStart, vertexEnd, EDGE_DEFAULT_WEIGHT, label);
+    public Edge addEdge(String vertexStartName, String vertexEndName, String label) {
+        return this.addEdge(vertexStartName, vertexEndName, EDGE_DEFAULT_WEIGHT, label);
     }
-    public Edge addEdge(Vertex vertexStart, Vertex vertexEnd, int weight) {
-        return this.addEdge(vertexStart, vertexEnd, weight, EDGE_DEFAULT_LABEL);
+    public Edge addEdge(String vertexStartName, String vertexEndName, int weight) {
+        return this.addEdge(vertexStartName, vertexEndName, weight, EDGE_DEFAULT_LABEL);
     }
-    public Edge addEdge(Vertex vertexStart, Vertex vertexEnd) {
-        return this.addEdge(vertexStart, vertexEnd, EDGE_DEFAULT_WEIGHT, EDGE_DEFAULT_LABEL);
+    public Edge addEdge(String vertexStartName, String vertexEndName) {
+        return this.addEdge(vertexStartName, vertexEndName, EDGE_DEFAULT_WEIGHT, EDGE_DEFAULT_LABEL);
     }
     /**
-     * Safely removes the Edge from the Graph.
-     * @param theEdge : The Edge object we will remove, if it exists in the graph
+     * Safely removes the Edge from the Graph, if it exists.
+     * @param vertexStartName : The name of the Vertex the Edge needs to start at
+     * @param vertexEndName : The name of the Vertex the Edge needs to end at
      */
     public void removeEdge(String vertexStartName, String vertexEndName) {
         Vertex vertexStart = this.getVertex(vertexStartName);
