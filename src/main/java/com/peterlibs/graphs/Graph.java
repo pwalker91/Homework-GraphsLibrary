@@ -126,6 +126,13 @@ public class Graph implements Serializable {
         return null;
     }
     /**
+     * Gets the number of edges in the Graph, in total
+     * @return Integer, the number of edges that have been added to this Graph
+     */
+    public int getNumberOfVertices() {
+        return this.vertices.size();
+    }
+    /**
      * Creates a new Vertex in the graph with the given Name.
      * @param newVertexName : The name of the Vertex. Must be UNIQUE
      * @return The Vertex object that was created
@@ -150,9 +157,11 @@ public class Graph implements Serializable {
         if (foundVertex == null) {
             throw new IllegalArgumentException("This vertex does not exist in the Graph.");
         }
-        for (Edge anEdge: this.edges) {
-            if (anEdge.getVertexStart() == foundVertex || anEdge.getVertexEnd() == foundVertex) {
-                this.removeEdge(anEdge);
+        for (Vertex aVertex: this.vertices) {
+            for (Edge anEdge: aVertex.getEdges()) {
+                if (anEdge.getVertexStart() == foundVertex || anEdge.getVertexEnd() == foundVertex) {
+                    this.removeEdge(anEdge);
+                }
             }
         }
         this.vertices.remove(foundVertex);
