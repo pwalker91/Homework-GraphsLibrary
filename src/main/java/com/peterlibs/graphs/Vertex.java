@@ -1,12 +1,13 @@
 package com.peterlibs.graphs;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 class Vertex implements Serializable {
 
-    static final Logger logger = Logger.getLogger(Vertex.class.getName());
+    static final Logger classLogger = LogManager.getLogger(Vertex.class);
     //Instance variables, for recording the edges this Vertex is incident to, specifically
     // where this is the STARTING vertex in the incident pair.
     private final ArrayList<Edge> edges;
@@ -38,7 +39,9 @@ class Vertex implements Serializable {
     protected void addEdge(Edge newEdge) {
         if (newEdge == null)
             throw new IllegalArgumentException("Cannot add a null Edge object.");
-        if (newEdge.getVertexStart() != this)
+        classLogger.trace("start: "+newEdge.getVertexStart().toString()+" "+newEdge.getVertexStart().hashCode());
+        classLogger.trace("this: "+this.toString()+" "+this.hashCode());
+        if (newEdge.getVertexStart().equals(this))
             throw new IllegalArgumentException("The Edge does not have this Vertex as its starting vertex.");
         this.edges.add(newEdge);
     }

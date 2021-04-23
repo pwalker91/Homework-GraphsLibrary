@@ -1,52 +1,64 @@
 package com.peterlibs.graphs;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.*;
 
 class GraphTest {
 
+    static final Logger testLogger = LogManager.getLogger(GraphTest.class);
+
     @Test
     void addVertex() {
+        testLogger.debug("Creating new Graph");
         Graph testGraph = new Graph();
 
+        testLogger.debug("Adding vertices");
         assertDoesNotThrow( () -> testGraph.addVertex("v1") );
         assertDoesNotThrow( () -> testGraph.addVertex("v2") );
+        testLogger.debug("Adding vertices that will throw an error");
         assertThrows(
             IllegalArgumentException.class,
             () -> testGraph.addVertex("v1")
         );
     }
 
-    @Test
     @Disabled
+    @Test
     void removeVertex() {
     }
 
     @Test
     void getVertex() {
+        testLogger.debug("Creating new Graph");
         Graph testGraph = new Graph();
 
+        testLogger.debug("Adding vertex");
         String testVertexName = "v1";
         testGraph.addVertex(testVertexName);
 
+        testLogger.debug("Getting the vertex from the Graph");
         Vertex addedVertex = testGraph.getVertex(testVertexName);
         assertInstanceOf(Vertex.class, addedVertex);
-
         String vertexLabel = addedVertex.getLabel();
         assertEquals(testVertexName, vertexLabel);
     }
 
     @Test
     void addEdge() {
+        testLogger.debug("Creating new Graph");
         Graph testGraph = new Graph();
+
+        testLogger.debug("Adding vertices");
         testGraph.addVertex("v1");
         testGraph.addVertex("v2");
         testGraph.addVertex("v3");
 
         //Adding new edges to graph
+        testLogger.debug("Adding edges");
         assertDoesNotThrow( () -> testGraph.addEdge("v1", "v2") );
         assertDoesNotThrow( () -> testGraph.addEdge("v2", "v3", 3) );
         assertDoesNotThrow( () -> testGraph.addEdge("v2", "v1", "edgy") );
@@ -57,6 +69,7 @@ class GraphTest {
         );
 
         //Updating existing edges
+        testLogger.debug("Updating edges");
         assertDoesNotThrow( () -> testGraph.addEdge("v1", "v2", 8) );
         assertDoesNotThrow( () -> testGraph.addEdge("v2", "v3", 2, "hello") );
         assertDoesNotThrow(
@@ -66,6 +79,7 @@ class GraphTest {
         );
 
         //bad edges
+        testLogger.debug("Adding bad edges");
         assertThrows(
             IllegalArgumentException.class,
             () -> testGraph.addEdge("v1", "v2", -3)
@@ -76,22 +90,27 @@ class GraphTest {
         );
     }
 
+    @Disabled
     @Test
     void removeEdge() {
     }
 
+    @Disabled
     @Test
     void findAllPaths() {
     }
 
+    @Disabled
     @Test
     void findShortestPath() {
     }
 
+    @Disabled
     @Test
     void findLongestPath() {
     }
 
+    @Disabled
     @Test
     void testSerialization() throws IOException, ClassNotFoundException
     {

@@ -1,11 +1,12 @@
 package com.peterlibs.graphs;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.io.Serializable;
-import java.util.logging.Logger;
 
 class Edge implements Serializable {
 
-    static final Logger logger = Logger.getLogger(Edge.class.getName());
+    static final Logger classLogger = LogManager.getLogger(Edge.class);
     //Instance variables, for recording the vertices this Edge is connecting, identifying
     // which vertex is the START and which is the END.
     //An Edge can also have a weight
@@ -22,6 +23,8 @@ class Edge implements Serializable {
      * @param label : [optional] The pretty name for the Edge. Defaults to 'label'.
      */
     Edge (Vertex vertexStart, Vertex vertexEnd, int weight, String label) {
+        classLogger.debug("Creating new Edge between '"+vertexStart.getLabel()+"' and '"+vertexEnd.getLabel()+"'");
+        classLogger.trace("");
         this.setLabel(label);
         this.setWeight(weight);
         this.setVertexStart(vertexStart);

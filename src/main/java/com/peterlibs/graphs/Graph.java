@@ -1,15 +1,16 @@
 package com.peterlibs.graphs;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.io.Serializable;
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.ArrayList;
 
 /**
  * Class for a Graph, which will store a map of Nodes connected by Edges
  */
 public class Graph implements Serializable {
 
-    static final Logger logger = Logger.getLogger(Graph.class.getName());
+    static final Logger classLogger = LogManager.getLogger(Graph.class);
     //Static variables for some of the stuff I don't want to keep typing
     static final int EDGE_DEFAULT_WEIGHT = 0;
     static final String EDGE_DEFAULT_LABEL = "An Edge";
@@ -41,6 +42,7 @@ public class Graph implements Serializable {
      *          Returns null if the Edge is not found
      */
     public Edge getEdge(String vertexStartName, String vertexEndName) {
+        classLogger.debug("Will attempt to find an Edge between '"+vertexStartName+"' and '"+vertexEndName+"'");
         Vertex vertexStart = this.getVertex(vertexStartName);
         Vertex vertexEnd = this.getVertex(vertexEndName);
         return vertexStart.getEdgeToVertex(vertexEnd);
@@ -65,15 +67,24 @@ public class Graph implements Serializable {
      * @return The Edge object that was created
      */
     public Edge addEdge(String vertexStartName, String vertexEndName, int weight, String label) {
+        classLogger.debug(
+            "Will add new Edge between '"+vertexStartName+"' and '"+vertexEndName+"' | "+
+                "weight = '"+weight+"', label = '"+label+"'"
+        );
         Vertex vertexStart = this.getVertex(vertexStartName);
         Vertex vertexEnd = this.getVertex(vertexEndName);
         Edge theEdge = vertexStart.getEdgeToVertex(vertexEnd);
         if (theEdge != null) {
+            classLogger.debug("Found the Edge. Updating weight and label");
             theEdge.setWeight(weight);
             theEdge.setLabel(label);
         }
         else {
+            classLogger.debug("Edge did not exist. Creating...");
             theEdge = new Edge(vertexStart, vertexEnd, weight, label);
+            classLogger.debug("Edge created. Adding to Vertex's store of Edges that originate from it");
+            classLogger.trace("edge: "+theEdge.getVertexStart().toString()+" "+theEdge.getVertexStart().hashCode());
+            classLogger.trace("vertex: "+vertexStart.toString()+" "+vertexStart.hashCode());
             vertexStart.addEdge(theEdge);
         }
         return theEdge;
@@ -93,6 +104,7 @@ public class Graph implements Serializable {
      * @param vertexEndName : The name of the Vertex the Edge needs to end at
      */
     public void removeEdge(String vertexStartName, String vertexEndName) {
+        classLogger.debug("Will remove Edge between '"+vertexStartName+"' and '"+vertexEndName+"', if it exists");
         Vertex vertexStart = this.getVertex(vertexStartName);
         Vertex vertexEnd = this.getVertex(vertexEndName);
         Edge theEdge = vertexStart.getEdgeToVertex(vertexEnd);
@@ -118,7 +130,12 @@ public class Graph implements Serializable {
      * @return A Vertex object if it exists, otherwise, null
      */
     public Vertex getVertex(String vertexName) {
+        classLogger.debug("Looking for Vertex '"+vertexName+"'");
         for (Vertex aVertex: this.vertices) {
+            classLogger.debug(
+                "Processing | "+
+                    "Label: '"+aVertex.getLabel()+"' | Edges: "+aVertex.getEdges().toString()
+            );
             if (aVertex.getLabel().equals(vertexName)) {
                 return aVertex;
             }
@@ -139,12 +156,14 @@ public class Graph implements Serializable {
      * @throws IllegalArgumentException : The given Name for the new Vertex already exists
      */
     public Vertex addVertex(String newVertexName) {
+        classLogger.debug("Will add new vertex '"+newVertexName+"' if it does not already exist");
         Vertex newVertex = this.getVertex(newVertexName);
         if (newVertex != null) {
             throw new IllegalArgumentException("A Vertex with this name already exists.");
         }
         newVertex = new Vertex();
         this.vertices.add(newVertex);
+        classLogger.debug("New Vertex '"+newVertexName+"' added");
         return newVertex;
     }
     /**
@@ -153,6 +172,7 @@ public class Graph implements Serializable {
      * @throws IllegalArgumentException : The given Vertex does not exist in the Graph
      */
     public void removeVertex(String vertexName) {
+        classLogger.debug("Looking for Vertex '"+vertexName+"' and removing it if it exists.");
         Vertex foundVertex = this.getVertex(vertexName);
         if (foundVertex == null) {
             throw new IllegalArgumentException("This vertex does not exist in the Graph.");
