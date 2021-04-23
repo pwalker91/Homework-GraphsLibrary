@@ -218,11 +218,14 @@ public class Graph implements Serializable {
                 aVertex.getLabel(),
                 vertexName
             );
+            ArrayList<Edge> edgesToRemove = new ArrayList<>();
             for (Edge anEdge: aVertex.getEdges()) {
                 if (anEdge.getVertexStart() == foundVertex || anEdge.getVertexEnd() == foundVertex) {
-                    this.removeEdge(anEdge);
+                    edgesToRemove.add(anEdge);
                 }
             }
+            classLogger.info("Will be removing {} Edges from the Vertex", edgesToRemove.size());
+            aVertex.getEdges().removeAll(edgesToRemove);
         }
         classLogger.info("All adjacent edges removed. Removing Vertex");
         this.vertices.remove(foundVertex);
