@@ -33,7 +33,7 @@ class Edge implements Serializable {
         this.setLabel(label);
         this.setWeight(weight);
         this.setVertexStart(vertexStart);
-        this.setVertexStart(vertexEnd);
+        this.setVertexEnd(vertexEnd);
     }
     Edge (Vertex vertexStart, Vertex vertexEnd, String label) {
         this(vertexStart, vertexEnd, Graph.EDGE_DEFAULT_WEIGHT, label);
@@ -57,8 +57,13 @@ class Edge implements Serializable {
 
     int getWeight() { return this.weight; }
     void setWeight(int newWeight) {
-        if (weight < 0)
+        if (newWeight < 0) {
+            classLogger.warn(
+                "Invalid Edge Weight. {} is less than 0",
+                newWeight
+            );
             throw new IllegalArgumentException("An edge cannot have a weight less than 0.");
+        }
         this.weight = newWeight;
     }
 
