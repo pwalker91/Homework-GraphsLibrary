@@ -45,6 +45,12 @@ public class Graph implements Serializable {
         classLogger.debug("Will attempt to find an Edge between '"+vertexStartName+"' and '"+vertexEndName+"'");
         Vertex vertexStart = this.getVertex(vertexStartName);
         Vertex vertexEnd = this.getVertex(vertexEndName);
+        return this.getEdge(vertexStart, vertexEnd);
+    }
+    private Edge getEdge(Vertex vertexStart, Vertex vertexEnd) {
+        if (vertexStart == null || vertexEnd == null) {
+            return null;
+        }
         return vertexStart.getEdgeToVertex(vertexEnd);
     }
     /**
@@ -72,8 +78,12 @@ public class Graph implements Serializable {
                 "weight = '"+weight+"', label = '"+label+"'"
         );
         Vertex vertexStart = this.getVertex(vertexStartName);
+        if (vertexStart == null)
+            throw new IllegalArgumentException("The Vertex "+vertexStartName+" does not exist in this Graph.");
         Vertex vertexEnd = this.getVertex(vertexEndName);
-        Edge theEdge = vertexStart.getEdgeToVertex(vertexEnd);
+        if (vertexEnd == null)
+            throw new IllegalArgumentException("The Vertex "+vertexEndName+" does not exist in this Graph.");
+        Edge theEdge = this.getEdge(vertexStart, vertexEnd);
         if (theEdge != null) {
             classLogger.debug("Found the Edge. Updating weight and label");
             theEdge.setWeight(weight);
@@ -161,7 +171,7 @@ public class Graph implements Serializable {
         if (newVertex != null) {
             throw new IllegalArgumentException("A Vertex with this name already exists.");
         }
-        newVertex = new Vertex();
+        newVertex = new Vertex(newVertexName);
         this.vertices.add(newVertex);
         classLogger.debug("New Vertex '"+newVertexName+"' added");
         return newVertex;
