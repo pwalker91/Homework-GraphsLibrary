@@ -33,16 +33,36 @@ class Vertex implements Serializable {
      */
 
     String getLabel() { return label; }
-    void setLabel(String label) { this.label = label; }
+    protected void setLabel(String label) {
+        if (label == null)
+            throw new IllegalArgumentException("Vertex cannot have a 'null' label.");
+        this.label = label;
+    }
 
     protected ArrayList<Edge> getEdges() { return this.edges; }
     protected void addEdge(Edge newEdge) {
-        if (newEdge == null)
+        if (newEdge == null) {
+            classLogger.warn("Given a null Edge object");
             throw new IllegalArgumentException("Cannot add a null Edge object.");
-        classLogger.trace("start: "+newEdge.getVertexStart().toString()+" "+newEdge.getVertexStart().hashCode());
-        classLogger.trace("this: "+this.toString()+" "+this.hashCode());
-        if (newEdge.getVertexStart().equals(this))
+        }
+        classLogger.trace(
+            "start: {} {}",
+            newEdge.getVertexStart().getLabel(),
+            newEdge.getVertexStart().toString()
+        );
+        classLogger.trace(
+            "this: {} {}",
+            this.getLabel(),
+            this.toString()
+        );
+        if (newEdge.getVertexStart() != this) {
+            classLogger.warn(
+                "This and given Start Vertex are not the same. {}' does not match '{}'",
+                newEdge.getVertexStart().getLabel(),
+                this.getLabel()
+            );
             throw new IllegalArgumentException("The Edge does not have this Vertex as its starting vertex.");
+        }
         this.edges.add(newEdge);
     }
     protected void removeEdge(Edge anEdge) { this.edges.remove(anEdge); }
@@ -53,6 +73,11 @@ class Vertex implements Serializable {
      * @return An Edge object if it exists, otherwise, null
      */
     Edge getEdgeToVertex(Vertex destinationVertex) {
+        if (destinationVertex == null) {
+            classLogger.debug("Given destination Vertex is null. No Edge can exist");
+            return null;
+        }
+
         classLogger.debug(
             "Looking for Edge that connects this to Vertex '{}'",
             destinationVertex.getLabel()
