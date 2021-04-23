@@ -53,11 +53,22 @@ class Vertex implements Serializable {
      * @return An Edge object if it exists, otherwise, null
      */
     Edge getEdgeToVertex(Vertex destinationVertex) {
+        classLogger.debug(
+            "Looking for Edge that connects this to Vertex '{}'",
+            destinationVertex.getLabel()
+        );
         for (Edge anEdge: this.edges) {
+            classLogger.trace(
+                "Processing Edge: {} |  Ending Vertex [{}] '{}'",
+                anEdge.toString(),
+                anEdge.getVertexEnd().toString(),
+                anEdge.getVertexEnd().getLabel()
+            );
             if (anEdge.getVertexEnd() == destinationVertex) {
                 return anEdge;
             }
         }
+        classLogger.debug("No Edge found. Returning null");
         return null;
     }
 

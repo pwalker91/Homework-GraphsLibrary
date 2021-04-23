@@ -42,15 +42,23 @@ public class Graph implements Serializable {
      *          Returns null if the Edge is not found
      */
     public Edge getEdge(String vertexStartName, String vertexEndName) {
-        classLogger.debug("Will attempt to find an Edge between '"+vertexStartName+"' and '"+vertexEndName+"'");
+        classLogger.debug(
+            "Will attempt to find an Edge between '{}' and '{}'",
+            vertexStartName,
+            vertexEndName
+        );
         Vertex vertexStart = this.getVertex(vertexStartName);
+        classLogger.debug("Starting Vertex: {}", vertexStart);
         Vertex vertexEnd = this.getVertex(vertexEndName);
+        classLogger.debug("Ending Vertex: {}", vertexEnd);
         return this.getEdge(vertexStart, vertexEnd);
     }
     private Edge getEdge(Vertex vertexStart, Vertex vertexEnd) {
         if (vertexStart == null || vertexEnd == null) {
+            classLogger.debug("One of the given vertices was null. Cannot create an Edge to null. Returning null.");
             return null;
         }
+        classLogger.debug("Asking Starting Vertex to search for Edge to Ending Vertex");
         return vertexStart.getEdgeToVertex(vertexEnd);
     }
     /**
@@ -74,8 +82,11 @@ public class Graph implements Serializable {
      */
     public Edge addEdge(String vertexStartName, String vertexEndName, int weight, String label) {
         classLogger.debug(
-            "Will add new Edge between '"+vertexStartName+"' and '"+vertexEndName+"' | "+
-                "weight = '"+weight+"', label = '"+label+"'"
+            "Will add/update Edge between '{}' and '{}' | weight = '{}', label = '{}'",
+            vertexStartName,
+            vertexEndName,
+            weight,
+            label
         );
         Vertex vertexStart = this.getVertex(vertexStartName);
         if (vertexStart == null)
@@ -93,8 +104,6 @@ public class Graph implements Serializable {
             classLogger.debug("Edge did not exist. Creating...");
             theEdge = new Edge(vertexStart, vertexEnd, weight, label);
             classLogger.debug("Edge created. Adding to Vertex's store of Edges that originate from it");
-            classLogger.trace("edge: "+theEdge.getVertexStart().toString()+" "+theEdge.getVertexStart().hashCode());
-            classLogger.trace("vertex: "+vertexStart.toString()+" "+vertexStart.hashCode());
             vertexStart.addEdge(theEdge);
         }
         return theEdge;
@@ -114,7 +123,11 @@ public class Graph implements Serializable {
      * @param vertexEndName : The name of the Vertex the Edge needs to end at
      */
     public void removeEdge(String vertexStartName, String vertexEndName) {
-        classLogger.debug("Will remove Edge between '"+vertexStartName+"' and '"+vertexEndName+"', if it exists");
+        classLogger.debug(
+            "Will remove Edge between '{}' and '{}', if it exists",
+            vertexStartName,
+            vertexEndName
+        );
         Vertex vertexStart = this.getVertex(vertexStartName);
         Vertex vertexEnd = this.getVertex(vertexEndName);
         Edge theEdge = vertexStart.getEdgeToVertex(vertexEnd);
@@ -140,13 +153,24 @@ public class Graph implements Serializable {
      * @return A Vertex object if it exists, otherwise, null
      */
     public Vertex getVertex(String vertexName) {
-        classLogger.debug("Looking for Vertex '"+vertexName+"'");
+        classLogger.debug(
+            "Looking for Vertex labeled '{}' in graph of {} vertices",
+            vertexName,
+            this.vertices.size()
+        );
         for (Vertex aVertex: this.vertices) {
             classLogger.debug(
-                "Processing | "+
-                    "Label: '"+aVertex.getLabel()+"' | Edges: "+aVertex.getEdges().toString()
+                "Processing | Label: '{}', Edges: {}",
+                aVertex.getLabel(),
+                aVertex.getEdges()
             );
             if (aVertex.getLabel().equals(vertexName)) {
+                classLogger.debug(
+                    "{} is a match | Label: '{}', Edges: {}",
+                    aVertex,
+                    aVertex.getLabel(),
+                    aVertex.getEdges()
+                );
                 return aVertex;
             }
         }
@@ -166,9 +190,10 @@ public class Graph implements Serializable {
      * @throws IllegalArgumentException : The given Name for the new Vertex already exists
      */
     public Vertex addVertex(String newVertexName) {
-        classLogger.debug("Will add new vertex '"+newVertexName+"' if it does not already exist");
+        classLogger.debug("Will add new vertex '{}' if it does not already exist", newVertexName);
         Vertex newVertex = this.getVertex(newVertexName);
         if (newVertex != null) {
+            classLogger.debug("Found a Vertex with the same label, which is not allowed");
             throw new IllegalArgumentException("A Vertex with this name already exists.");
         }
         newVertex = new Vertex(newVertexName);
@@ -182,18 +207,24 @@ public class Graph implements Serializable {
      * @throws IllegalArgumentException : The given Vertex does not exist in the Graph
      */
     public void removeVertex(String vertexName) {
-        classLogger.debug("Looking for Vertex '"+vertexName+"' and removing it if it exists.");
+        classLogger.debug("Looking for Vertex labeled '{}' and removing it if it exists.", vertexName);
         Vertex foundVertex = this.getVertex(vertexName);
         if (foundVertex == null) {
             throw new IllegalArgumentException("This vertex does not exist in the Graph.");
         }
         for (Vertex aVertex: this.vertices) {
+            classLogger.debug(
+                "Checking if Vertex '{}' has any Edges that are linked to the Vertex we want to remove, '{}'",
+                aVertex.getLabel(),
+                vertexName
+            );
             for (Edge anEdge: aVertex.getEdges()) {
                 if (anEdge.getVertexStart() == foundVertex || anEdge.getVertexEnd() == foundVertex) {
                     this.removeEdge(anEdge);
                 }
             }
         }
+        classLogger.info("All adjacent edges removed. Removing Vertex");
         this.vertices.remove(foundVertex);
     }
     //What I'd like to do here is have the return of removing a Vertex also return a

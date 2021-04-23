@@ -23,8 +23,13 @@ class Edge implements Serializable {
      * @param label : [optional] The pretty name for the Edge. Defaults to 'label'.
      */
     Edge (Vertex vertexStart, Vertex vertexEnd, int weight, String label) {
-        classLogger.debug("Creating new Edge between '"+vertexStart.getLabel()+"' and '"+vertexEnd.getLabel()+"'");
-        classLogger.trace("");
+        classLogger.debug(
+            "Creating new Edge between '{}' and '{}'. weight = {}, label = '{}'",
+            vertexStart.getLabel(),
+            vertexEnd.getLabel(),
+            weight,
+            label
+        );
         this.setLabel(label);
         this.setWeight(weight);
         this.setVertexStart(vertexStart);
@@ -58,8 +63,16 @@ class Edge implements Serializable {
     }
 
     Vertex getVertexStart() { return this.vertexStart; }
+    /**
+     * Sets the given Vertex to be the Edge's new Starting Vertex
+     * @param newVertex : A Vertex object. `null` is allowed
+     */
     protected void setVertexStart(Vertex newVertex) { this.vertexStart = newVertex; }
     Vertex getVertexEnd() { return this.vertexEnd; }
+    /**
+     * Sets the given Vertex to be the Edge's new Ending Vertex
+     * @param newVertex : A Vertex object. `null` is allowed
+     */
     protected void setVertexEnd(Vertex newVertex) { this.vertexEnd = newVertex; }
 
 }
