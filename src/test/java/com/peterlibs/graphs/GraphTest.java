@@ -19,15 +19,50 @@ class GraphTest {
         testLogger.info("Adding vertices");
         assertDoesNotThrow( () -> testGraph.addVertex("v1") );
         assertDoesNotThrow( () -> testGraph.addVertex("v2") );
+
+        testLogger.info("Adding vertices that will throw an error");
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> testGraph.addVertex(null) );
         assertThrows(
             IllegalArgumentException.class,
             () -> testGraph.addVertex("v1")
         );
+        assertEquals(testGraph.getNumberOfVertices(), 2);
     }
 
-    @Disabled
     @Test
     void removeVertex() {
+        testLogger.info("Creating new Graph");
+        Graph testGraph = new Graph();
+        String vertexToBeRemoved = "v2";
+        String vertexToStay = "v1";
+
+        testLogger.info("Adding vertices");
+        assertDoesNotThrow( () -> testGraph.addVertex(vertexToStay) );
+        assertDoesNotThrow( () -> testGraph.addVertex(vertexToBeRemoved) );
+        assertDoesNotThrow( () -> testGraph.addEdge(vertexToStay, vertexToBeRemoved) );
+
+        testLogger.info("Validating that Vertex '{}' exists", vertexToBeRemoved);
+        assertInstanceOf(Vertex.class, testGraph.getVertex(vertexToBeRemoved));
+        assertInstanceOf(
+            Vertex.class,
+            testGraph.getEdge(vertexToStay, vertexToBeRemoved).getVertexEnd()
+        );
+
+        testLogger.info("Removing Vertex '{}'", vertexToBeRemoved);
+        assertDoesNotThrow( () -> testGraph.removeVertex(vertexToBeRemoved) );
+
+        testLogger.info("Validating that vertex is gone");
+        assertEquals(testGraph.getNumberOfVertices(), 1);
+        assertNull(testGraph.getVertex(vertexToBeRemoved));
+        assertEquals(testGraph.getVertex(vertexToStay).getEdges().size(), 0);
+        assertNull(
+            testGraph.getVertex(vertexToStay).getEdgeToVertex(
+                testGraph.getVertex(vertexToBeRemoved)
+            )
+        );
+        assertNull(testGraph.getEdge(vertexToStay, vertexToBeRemoved));
     }
 
     @Test
@@ -44,6 +79,17 @@ class GraphTest {
         assertInstanceOf(Vertex.class, addedVertex);
         String vertexLabel = addedVertex.getLabel();
         assertEquals(testVertexName, vertexLabel);
+
+        testLogger.info("Adding another Vertex and an Edge between them");
+        String otherVertexName = "v2";
+        testGraph.addVertex(otherVertexName);
+        testGraph.addEdge(testVertexName, otherVertexName);
+
+        testLogger.info("Testing that Edge actually has reference to Vertices");
+        Edge theEdgeBetween = testGraph.getEdge(testVertexName, otherVertexName);
+        Vertex otherAddedVertex = testGraph.getVertex(otherVertexName);
+        assertEquals(addedVertex, theEdgeBetween.getVertexStart());
+        assertEquals(otherAddedVertex, theEdgeBetween.getVertexEnd());
     }
 
     @Test
