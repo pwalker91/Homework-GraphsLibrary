@@ -13,13 +13,12 @@ class GraphTest {
 
     @Test
     void addVertex() {
-        testLogger.debug("Creating new Graph");
+        testLogger.info("Creating new Graph");
         Graph testGraph = new Graph();
 
-        testLogger.debug("Adding vertices");
+        testLogger.info("Adding vertices");
         assertDoesNotThrow( () -> testGraph.addVertex("v1") );
         assertDoesNotThrow( () -> testGraph.addVertex("v2") );
-        testLogger.debug("Adding vertices that will throw an error");
         assertThrows(
             IllegalArgumentException.class,
             () -> testGraph.addVertex("v1")
@@ -33,14 +32,14 @@ class GraphTest {
 
     @Test
     void getVertex() {
-        testLogger.debug("Creating new Graph");
+        testLogger.info("Creating new Graph");
         Graph testGraph = new Graph();
 
-        testLogger.debug("Adding vertex");
+        testLogger.info("Adding vertex");
         String testVertexName = "v1";
         testGraph.addVertex(testVertexName);
 
-        testLogger.debug("Getting the vertex from the Graph");
+        testLogger.info("Getting the vertex from the Graph");
         Vertex addedVertex = testGraph.getVertex(testVertexName);
         assertInstanceOf(Vertex.class, addedVertex);
         String vertexLabel = addedVertex.getLabel();
@@ -49,16 +48,16 @@ class GraphTest {
 
     @Test
     void addEdge() {
-        testLogger.debug("Creating new Graph");
+        testLogger.info("Creating new Graph");
         Graph testGraph = new Graph();
 
-        testLogger.debug("Adding vertices");
+        testLogger.info("Adding vertices");
         testGraph.addVertex("v1");
         testGraph.addVertex("v2");
         testGraph.addVertex("v3");
 
         //Adding new edges to graph
-        testLogger.debug("Adding edges");
+        testLogger.info("Adding edges");
         assertDoesNotThrow( () -> testGraph.addEdge("v1", "v2") );
         assertDoesNotThrow( () -> testGraph.addEdge("v2", "v3", 3) );
         assertDoesNotThrow( () -> testGraph.addEdge("v2", "v1", "edgy") );
@@ -69,7 +68,7 @@ class GraphTest {
         );
 
         //Updating existing edges
-        testLogger.debug("Updating edges");
+        testLogger.info("Updating edges");
         assertDoesNotThrow( () -> testGraph.addEdge("v1", "v2", 8) );
         assertDoesNotThrow( () -> testGraph.addEdge("v2", "v3", 2, "hello") );
         assertDoesNotThrow(
@@ -79,7 +78,7 @@ class GraphTest {
         );
 
         //bad edges
-        testLogger.debug("Adding bad edges");
+        testLogger.info("Adding bad edges");
         assertThrows(
             IllegalArgumentException.class,
             () -> testGraph.addEdge("v1", "v2", -3)
