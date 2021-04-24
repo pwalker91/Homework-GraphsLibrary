@@ -97,4 +97,11 @@ class Vertex implements Serializable {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return "'"+this.getLabel()+"' | "+
+            this.getEdges().toString()+" | "+
+            super.toString();
+    }
+
 }
