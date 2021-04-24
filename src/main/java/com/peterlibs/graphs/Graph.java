@@ -249,19 +249,40 @@ public class Graph implements Serializable {
      *  it is connected to to similarly search for a path. If any of them find a path, the
      *  starting vertex will add itself to the path and return.
      * @param vertexStart : The vertex we are at
-     * @param vertexEnd : The vertex we are searching for
+     * @param vertexDestination : The vertex we are searching for
      * @param visitedVertices : ArrayList of Vertex objects, the ones already visited
      * @return ArrayList of ArrayLists of Edge objects. Each sub-ArrayList describe
      *          a possible path to the destination vertex.
      */
-    private ArrayList<ArrayList<Edge>> allPathSearchForDestination(Vertex vertexStart, Vertex vertexEnd, ArrayList<Vertex> visitedVertices) {
+    private ArrayList<ArrayList<Edge>> allPathSearchForDestination(Vertex vertexStart, Vertex vertexDestination, ArrayList<Vertex> visitedVertices) {
         ArrayList<ArrayList<Edge>> foundPaths = new ArrayList<>();
-        //The `clone` method will be fine in this situation because our values
-        // are all going to be references to objects.
-        ArrayList<Vertex> newVisitedVertices = (ArrayList<Vertex>) visitedVertices.clone();
+
+        //The `clone` method should be fine in this situation because our values
+        // are all going to be references to objects. Although, my more rudimentary
+        // experience with Java may had made this a spectacular blunder to learn from.
+        ArrayList<Vertex> newVisitedVertices = new ArrayList<>(visitedVertices);
+        newVisitedVertices.add(vertexStart);
 
         for (Edge anEdge: vertexStart.getEdges()) {
+            //If we have already visited the vertex, skip doing anything more
+            if (visitedVertices.contains(anEdge.getVertexEnd()))
+                continue;
 
+            ArrayList<Edge> itsAPath = new ArrayList<>();
+            if (anEdge.getVertexEnd() == vertexDestination) {
+                itsAPath.add(anEdge);
+                foundPaths.add(itsAPath);
+            }
+            else {
+                //Add all other found paths from the Edge's End Vertex
+                ArrayList<ArrayList<Edge>> foundPathsForThisEdge = allPathSearchForDestination(
+                    anEdge.getVertexEnd(), vertexDestination, newVisitedVertices
+                );
+                for (ArrayList<Edge> aPath: foundPathsForThisEdge) {
+                    aPath.add(0, anEdge);
+                }
+                foundPaths.addAll(foundPathsForThisEdge);
+            }
         }
 
         return foundPaths;
@@ -273,35 +294,53 @@ public class Graph implements Serializable {
      *  in the shortest path between two vertices.
      * @param vertexStartName : The starting point of our path search
      * @param vertexEndName : The Vertex we wish to reach
-     * @param asStrings : True to return the paths as lists of String. False to return as Vertex objects.
-     * @return An ArrayList of ArrayList of String or Vertex objects.
-     *         Each embedded ArrayList represents a path, where the first Vertex is our
-     *         starting point, and the final Vertex is our destination.
+     * @return An ArrayList of ArrayList of String or Edge objects.
+     *         Each embedded ArrayList represents a path, where the first given Vertex is our
+     *         starting point, and the final given Vertex is our destination.
      * @throws RuntimeException, when no paths could be found
      */
-    public ArrayList<ArrayList<Object>> findAllPaths(String vertexStartName, String vertexEndName, boolean asStrings) {
-        ArrayList<ArrayList<Object>> allPaths = new ArrayList<>();
-//        label v as explored
-//        for all edges e in G.incidentEdges(v) do
-//            if edge e is unexplored then
-//                w ← G.adjacentVertex(v, e)
-//                if vertex w is unexplored then
-//                    label e as a discovered edge
-//                    recursively call DFS(G, w)
-//                else
-//                    label e as a back edge
+    public ArrayList<ArrayList<Vertex>> findAllPaths(String vertexStartName, String vertexEndName) {
+        ArrayList<ArrayList<Vertex>> allPaths = new ArrayList<>();
+
+        Vertex vertexStart = this.getVertex(vertexStartName);
+        Vertex vertexEnd = this.getVertex(vertexEndName);
+        if (vertexStart == vertexEnd) {
+            throw new IllegalArgumentException("Starting Vertex and Ending Vertex cannot be the same");
+        }
+        ArrayList<Vertex> visitedVertices = new ArrayList<>();
+        ArrayList<ArrayList<Edge>> foundPaths = allPathSearchForDestination(vertexStart, vertexEnd, visitedVertices);
+
+        for (ArrayList<Edge> aPath: foundPaths) {
+            ArrayList<Vertex> parsedPath = new ArrayList<>();
+            for (Edge pathEdge : aPath) {
+                parsedPath.add(pathEdge.getVertexStart());
+                if (pathEdge == aPath.get(aPath.size() - 1))
+                    parsedPath.add(pathEdge.getVertexEnd());
+            }
+            allPaths.add(parsedPath);
+        }
         return allPaths;
     }
 
     /**
+     *
+     * @param vertexStart
+     * @param vertexEnd
+     * @param visitedVertices
+     * @return
+     */
+    private Edge shortestPathSearchForDestination(Vertex vertexStart, Vertex vertexEnd, ArrayList<Vertex> visitedVertices) {
+        //TODO: implement
+        return null;
+    }
+    /**
      * Gets the shortest path between the given start and end vertices.
      * @param vertexStartName : The starting point of our path search
      * @param vertexEndName : The Vertex we wish to reach
-     * @param asStrings : True to return the paths as lists of String. False to return as Vertex objects.
-     * @return An ArrayList of String or Vertex objects., the shortest path from Vertex A to Vertex B
+     * @return An ArrayList of String or Edge objects, the shortest path from Vertex A to Vertex B
      */
-    public ArrayList<Object> findShortestPath(String vertexStartName, String vertexEndName, boolean asStrings) {
-        ArrayList<Object> shortestPath = new ArrayList<>();
+    public ArrayList<Vertex> findShortestPath(String vertexStartName, String vertexEndName) {
+        ArrayList<Vertex> shortestPath = new ArrayList<>();
 //        create a queue Q
 //        enqueue v onto Q
 //        mark v
@@ -322,11 +361,10 @@ public class Graph implements Serializable {
      * Finds the longest path between the given start and end vertices.
      * @param vertexStartName : The starting point of our path search
      * @param vertexEndName : The Vertex we wish to reach
-     * @param asStrings : True to return the paths as lists of String. False to return as Vertex objects.
-     * @return An ArrayList of String or Vertex objects., the longest path from Vertex A to Vertex B
+     * @return An ArrayList of String or Edge objects, the longest path from Vertex A to Vertex B
      */
-    public ArrayList<Object> findLongestPath(String vertexStartName, String vertexEndName, boolean asStrings) {
-        ArrayList<Object> longestPath = new ArrayList<>();
+    public ArrayList<Vertex> findLongestPath(String vertexStartName, String vertexEndName) {
+        ArrayList<Vertex> longestPath = new ArrayList<>();
         return longestPath;
     }
 
