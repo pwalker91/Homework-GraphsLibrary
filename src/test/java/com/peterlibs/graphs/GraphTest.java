@@ -102,7 +102,6 @@ class GraphTest {
         testGraph.addVertex("v2");
         testGraph.addVertex("v3");
 
-        //Adding new edges to graph
         testLogger.info("Adding edges");
         assertDoesNotThrow( () -> testGraph.addEdge("v1", "v2") );
         assertDoesNotThrow( () -> testGraph.addEdge("v2", "v3", 3) );
@@ -113,7 +112,6 @@ class GraphTest {
             )
         );
 
-        //Updating existing edges
         testLogger.info("Updating edges");
         assertDoesNotThrow( () -> testGraph.addEdge("v1", "v2", 8) );
         assertDoesNotThrow( () -> testGraph.addEdge("v2", "v3", 2, "hello") );
@@ -123,7 +121,6 @@ class GraphTest {
             )
         );
 
-        //bad edges
         testLogger.info("Adding bad edges");
         assertThrows(
             IllegalArgumentException.class,
@@ -135,9 +132,35 @@ class GraphTest {
         );
     }
 
-    @Disabled
     @Test
     void removeEdge() {
+        testLogger.info("Creating new Graph");
+        Graph testGraph = new Graph();
+
+        testLogger.info("Adding vertices");
+        testGraph.addVertex("v1");
+        testGraph.addVertex("v2");
+        testGraph.addVertex("v3");
+
+        testLogger.info("Adding edges");
+        assertDoesNotThrow( () -> testGraph.addEdge("v1", "v2", 4) );
+        assertDoesNotThrow( () -> testGraph.addEdge("v2", "v3", 3) );
+        assertDoesNotThrow( () -> testGraph.addEdge("v2", "v1", 7) );
+        assertDoesNotThrow( () -> testGraph.addEdge("v3", "v1", 7) );
+
+        testLogger.info("Verifying correct number of edges");
+        assertEquals(testGraph.getVertex("v1").getEdges().size(), 1);
+        assertEquals(testGraph.getVertex("v2").getEdges().size(), 2);
+        assertEquals(testGraph.getVertex("v3").getEdges().size(), 1);
+
+        testLogger.info("Removing edges");
+        assertDoesNotThrow( () -> testGraph.removeEdge("v2", "v1") );
+        assertDoesNotThrow( () -> testGraph.removeEdge("v3", "v1") );
+
+        testLogger.info("Verifying correct number of edges");
+        assertEquals(testGraph.getVertex("v1").getEdges().size(), 1);
+        assertEquals(testGraph.getVertex("v2").getEdges().size(), 1);
+        assertEquals(testGraph.getVertex("v3").getEdges().size(), 0);
     }
 
     @Disabled
