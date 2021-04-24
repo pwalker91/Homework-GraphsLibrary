@@ -178,17 +178,15 @@ class GraphTest {
     void findLongestPath() {
     }
 
-    @Disabled
     @Test
-    void testSerialization() throws IOException, ClassNotFoundException
-    {
-        String filename = "graphserialized.txt";
+    void testSerialization() throws IOException, ClassNotFoundException {
         Graph testGraph = new Graph();
         testGraph.addVertex("v1");
         testGraph.addVertex("v2");
         testGraph.addEdge("v1", "v2", 3, "e1");
 
         //saving the serialized object to a file
+        File filename = File.createTempFile("serialized", ".tmp");
         FileOutputStream fileOutputStream = new FileOutputStream(filename);
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
         objectOutputStream.writeObject(testGraph);
@@ -203,14 +201,19 @@ class GraphTest {
 
         //Getting the same edge from each Graph
         Edge theEdge = testGraph.getEdge("v1","v2");
+        Vertex startVertex = theEdge.getVertexStart();
         Edge theEdge2 = testGraph2.getEdge("v1","v2");
+        Vertex startVertex2 = theEdge2.getVertexStart();
 
         //Verifying that the objects are essentially the same
+        assertNotEquals(testGraph, testGraph2);
+        assertNotEquals(theEdge, theEdge2);
+        assertNotEquals(startVertex, startVertex2);
         assertEquals(testGraph.getNumberOfEdges(), testGraph2.getNumberOfEdges());
         assertEquals(testGraph.getNumberOfVertices(), testGraph2.getNumberOfVertices());
         assertEquals(theEdge.getLabel(), theEdge2.getLabel());
         assertEquals(theEdge.getWeight(), theEdge2.getWeight());
-        assertEquals(theEdge.getVertexStart().getLabel(), theEdge2.getVertexStart().getLabel());
-        assertEquals(theEdge.getVertexEnd().getLabel(), theEdge2.getVertexEnd().getLabel());
+        assertEquals(startVertex.getLabel(), startVertex2.getLabel());
+        assertEquals(startVertex.getLabel(), startVertex2.getLabel());
     }
 }
