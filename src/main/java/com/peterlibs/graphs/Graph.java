@@ -239,45 +239,95 @@ public class Graph implements Serializable {
 
     /*
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     * Getting Paths between Vertices
+     * Getting Paths between Vertices, or generic info about the Edges/Vertices related to a Vertex
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      */
 
     /**
-     * Find all possible paths from the Vertex A to Vertex B, regardless of cost and
-     * without using the same Vertex twice.
-     * @param vertexStart : The starting point of our path search
-     * @param vertexEnd : The Vertex we wish to reach
-     * @return An ArrayList of ArrayList of Vertex objects.
+     * Will follow all possible paths to search for any feasible path to the destination.
+     * If the vertex we are at does not have a direct path, then it will ask the vertices
+     *  it is connected to to similarly search for a path. If any of them find a path, the
+     *  starting vertex will add itself to the path and return.
+     * @param vertexStart : The vertex we are at
+     * @param vertexEnd : The vertex we are searching for
+     * @param visitedVertices : ArrayList of Vertex objects, the ones already visited
+     * @return ArrayList of ArrayLists of Edge objects. Each sub-ArrayList describe
+     *          a possible path to the destination vertex.
+     */
+    private ArrayList<ArrayList<Edge>> allPathSearchForDestination(Vertex vertexStart, Vertex vertexEnd, ArrayList<Vertex> visitedVertices) {
+        ArrayList<ArrayList<Edge>> foundPaths = new ArrayList<>();
+        //The `clone` method will be fine in this situation because our values
+        // are all going to be references to objects.
+        ArrayList<Vertex> newVisitedVertices = (ArrayList<Vertex>) visitedVertices.clone();
+
+        for (Edge anEdge: vertexStart.getEdges()) {
+
+        }
+
+        return foundPaths;
+    }
+    /**
+     * Find all possible paths from the Vertex A to Vertex B, regardless of cost.
+     * Each path will only use each Vertex once at a maximum.
+     * The search pattern will be using a depth-first search, since we are not interested
+     *  in the shortest path between two vertices.
+     * @param vertexStartName : The starting point of our path search
+     * @param vertexEndName : The Vertex we wish to reach
+     * @param asStrings : True to return the paths as lists of String. False to return as Vertex objects.
+     * @return An ArrayList of ArrayList of String or Vertex objects.
      *         Each embedded ArrayList represents a path, where the first Vertex is our
      *         starting point, and the final Vertex is our destination.
      * @throws RuntimeException, when no paths could be found
      */
-    public ArrayList<ArrayList<Vertex>> findAllPaths(Vertex vertexStart, Vertex vertexEnd) {
-        //TODO: implement
-        return null;
+    public ArrayList<ArrayList<Object>> findAllPaths(String vertexStartName, String vertexEndName, boolean asStrings) {
+        ArrayList<ArrayList<Object>> allPaths = new ArrayList<>();
+//        label v as explored
+//        for all edges e in G.incidentEdges(v) do
+//            if edge e is unexplored then
+//                w ← G.adjacentVertex(v, e)
+//                if vertex w is unexplored then
+//                    label e as a discovered edge
+//                    recursively call DFS(G, w)
+//                else
+//                    label e as a back edge
+        return allPaths;
     }
 
     /**
-     *
-     * @param vertexStart : The starting point of our path search
-     * @param vertexEnd : The Vertex we wish to reach
-     * @return An ArrayList of Vertex objects, the shortest path from Vertex A to Vertex B
+     * Gets the shortest path between the given start and end vertices.
+     * @param vertexStartName : The starting point of our path search
+     * @param vertexEndName : The Vertex we wish to reach
+     * @param asStrings : True to return the paths as lists of String. False to return as Vertex objects.
+     * @return An ArrayList of String or Vertex objects., the shortest path from Vertex A to Vertex B
      */
-    public ArrayList<Vertex> findShortestPath(Vertex vertexStart, Vertex vertexEnd) {
-        //TODO: implement
-        return null;
+    public ArrayList<Object> findShortestPath(String vertexStartName, String vertexEndName, boolean asStrings) {
+        ArrayList<Object> shortestPath = new ArrayList<>();
+//        create a queue Q
+//        enqueue v onto Q
+//        mark v
+//        while Q is not empty do
+//            w ← Q.dequeue()
+//            if w is what we are looking for then
+//                return w
+//            for all edges e in G.adjacentEdges(w) do
+//                x ← G.adjacentVertex(w, e)
+//                if x is not marked then
+//                    mark x
+//                    enqueue x onto Q
+//        return null
+        return shortestPath;
     }
 
     /**
-     *
-     * @param vertexStart : The starting point of our path search
-     * @param vertexEnd : The Vertex we wish to reach
-     * @return An ArrayList of Vertex objects, the longest path from Vertex A to Vertex B
+     * Finds the longest path between the given start and end vertices.
+     * @param vertexStartName : The starting point of our path search
+     * @param vertexEndName : The Vertex we wish to reach
+     * @param asStrings : True to return the paths as lists of String. False to return as Vertex objects.
+     * @return An ArrayList of String or Vertex objects., the longest path from Vertex A to Vertex B
      */
-    public ArrayList<Vertex> findLongestPath(Vertex vertexStart, Vertex vertexEnd) {
-        //TODO: implement
-        return null;
+    public ArrayList<Object> findLongestPath(String vertexStartName, String vertexEndName, boolean asStrings) {
+        ArrayList<Object> longestPath = new ArrayList<>();
+        return longestPath;
     }
 
 }
