@@ -4,6 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.BeforeEach;
+
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
 
@@ -163,21 +166,6 @@ class GraphTest {
         assertEquals(testGraph.getVertex("v3").getEdges().size(), 0);
     }
 
-    @Disabled
-    @Test
-    void findAllPaths() {
-    }
-
-    @Disabled
-    @Test
-    void findShortestPath() {
-    }
-
-    @Disabled
-    @Test
-    void findLongestPath() {
-    }
-
     @Test
     void testSerialization() throws IOException, ClassNotFoundException {
         Graph testGraph = new Graph();
@@ -216,4 +204,52 @@ class GraphTest {
         assertEquals(startVertex.getLabel(), startVertex2.getLabel());
         assertEquals(startVertex.getLabel(), startVertex2.getLabel());
     }
+
+    @Nested
+    class GraphPathTest {
+
+        @BeforeEach
+        public void init() {
+            testLogger.info("Creating new Graph");
+            Graph testGraph = new Graph();
+
+            testLogger.info("Adding vertices");
+            testGraph.addVertex("v1");
+            testGraph.addVertex("v2");
+            testGraph.addVertex("v3");
+            testGraph.addVertex("v4");
+            testGraph.addVertex("v5");
+
+            testLogger.info("Adding edges");
+            assertDoesNotThrow(() -> testGraph.addEdge("v1", "v2", 4));
+            assertDoesNotThrow(() -> testGraph.addEdge("v1", "v3", 3));
+            assertDoesNotThrow(() -> testGraph.addEdge("v1", "v5", 2));
+            assertDoesNotThrow(() -> testGraph.addEdge("v2", "v1", 5));
+            assertDoesNotThrow(() -> testGraph.addEdge("v2", "v3", 6));
+            assertDoesNotThrow(() -> testGraph.addEdge("v2", "v4", 8));
+            assertDoesNotThrow(() -> testGraph.addEdge("v2", "v5", 3));
+            assertDoesNotThrow(() -> testGraph.addEdge("v3", "v2", 4));
+            assertDoesNotThrow(() -> testGraph.addEdge("v3", "v4", 3));
+            assertDoesNotThrow(() -> testGraph.addEdge("v4", "v1", 2));
+            assertDoesNotThrow(() -> testGraph.addEdge("v4", "v2", 5));
+            assertDoesNotThrow(() -> testGraph.addEdge("v4", "v3", 6));
+            assertDoesNotThrow(() -> testGraph.addEdge("v5", "v3", 2));
+            assertDoesNotThrow(() -> testGraph.addEdge("v5", "v4", 1));
+        }
+
+        @Test
+        void findAllPaths() {
+            testLogger.info("Finding and Validating paths from 'v1' to 'v3'");
+        }
+
+        @Test
+        void findShortestPath() {
+        }
+
+        @Test
+        void findLongestPath() {
+        }
+
+    }
+
 }
