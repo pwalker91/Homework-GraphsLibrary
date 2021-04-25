@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Class for a Graph, which will store a map of Nodes connected by Edges
@@ -141,8 +143,8 @@ public class Graph implements Serializable {
         // have any references to the Edge and that the Edge has no references to any vertices.
         // Then we can safely remove the Edge from our Graph and the garbage collector should
         // clean up our memory.
-        theEdge.getVertexStart().getEdges().remove(theEdge);
-        theEdge.getVertexEnd().getEdges().remove(theEdge);
+        theEdge.getVertexStart().getEdgesInternal().remove(theEdge);
+        theEdge.getVertexEnd().getEdgesInternal().remove(theEdge);
         theEdge.setVertexStart(null);
         theEdge.setVertexEnd(null);
     }
@@ -225,7 +227,7 @@ public class Graph implements Serializable {
                 }
             }
             classLogger.info("Will be removing {} Edges from the Vertex", edgesToRemove.size());
-            aVertex.getEdges().removeAll(edgesToRemove);
+            aVertex.getEdgesInternal().removeAll(edgesToRemove);
         }
         classLogger.info("All adjacent edges removed. Removing Vertex");
         this.vertices.remove(foundVertex);
@@ -305,9 +307,11 @@ public class Graph implements Serializable {
         Vertex vertexStart = this.getVertex(vertexStartName);
         Vertex vertexEnd = this.getVertex(vertexEndName);
         if (vertexStart == vertexEnd) {
+            classLogger.debug("Was given the same vertex for the start and end.");
             throw new IllegalArgumentException("Starting Vertex and Ending Vertex cannot be the same");
         }
         ArrayList<Vertex> visitedVertices = new ArrayList<>();
+        classLogger.debug("Calling recursive helper function to get all paths.");
         ArrayList<ArrayList<Edge>> foundPaths = allPathSearchForDestination(vertexStart, vertexEnd, visitedVertices);
 
         for (ArrayList<Edge> aPath: foundPaths) {
