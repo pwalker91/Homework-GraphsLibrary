@@ -245,6 +245,17 @@ public class Graph implements Serializable {
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      */
 
+    private Path makeIntoPath(ArrayList<Edge> aRawPath) {
+        Path newPath = new Path();
+        for (int i = 0; i < aRawPath.size(); i++) {
+            newPath.addStep(
+                aRawPath.get(i),
+                ((i+1) == aRawPath.size()) //True if is final Edge in ArrayList
+            );
+        }
+        return newPath;
+    }
+
     /**
      * Will follow all possible paths to search for any feasible path to the destination.
      * If the vertex we are at does not have a direct path, then it will ask the vertices
@@ -301,8 +312,8 @@ public class Graph implements Serializable {
      *         starting point, and the final given Vertex is our destination.
      * @throws RuntimeException, when no paths could be found
      */
-    public ArrayList<ArrayList<Vertex>> findAllPaths(String vertexStartName, String vertexEndName) {
-        ArrayList<ArrayList<Vertex>> allPaths = new ArrayList<>();
+    public List<Path> findAllPaths(String vertexStartName, String vertexEndName) {
+        ArrayList<Path> allPaths = new ArrayList<>();
 
         Vertex vertexStart = this.getVertex(vertexStartName);
         Vertex vertexEnd = this.getVertex(vertexEndName);
@@ -314,16 +325,13 @@ public class Graph implements Serializable {
         classLogger.debug("Calling recursive helper function to get all paths.");
         ArrayList<ArrayList<Edge>> foundPaths = allPathSearchForDestination(vertexStart, vertexEnd, visitedVertices);
 
-        for (ArrayList<Edge> aPath: foundPaths) {
-            ArrayList<Vertex> parsedPath = new ArrayList<>();
-            for (Edge pathEdge : aPath) {
-                parsedPath.add(pathEdge.getVertexStart());
-                if (pathEdge == aPath.get(aPath.size() - 1))
-                    parsedPath.add(pathEdge.getVertexEnd());
-            }
-            allPaths.add(parsedPath);
+        classLogger.debug("Converting ArrayList of paths (using Edge objects) into ArrayLists of Vertices");
+        for (ArrayList<Edge> aRawPath: foundPaths) {
+            allPaths.add(
+                this.makeIntoPath(aRawPath)
+            );
         }
-        return allPaths;
+        return Collections.unmodifiableList(allPaths);
     }
 
     /**
@@ -341,10 +349,10 @@ public class Graph implements Serializable {
      * Gets the shortest path between the given start and end vertices.
      * @param vertexStartName : The starting point of our path search
      * @param vertexEndName : The Vertex we wish to reach
-     * @return An ArrayList of String or Edge objects, the shortest path from Vertex A to Vertex B
+     * @return A Path object, the shortest path from Vertex A to Vertex B
      */
-    public ArrayList<Vertex> findShortestPath(String vertexStartName, String vertexEndName) {
-        ArrayList<Vertex> shortestPath = new ArrayList<>();
+    public Path findShortestPath(String vertexStartName, String vertexEndName) {
+        Path shortestPath = new Path();
 //        create a queue Q
 //        enqueue v onto Q
 //        mark v
@@ -365,10 +373,10 @@ public class Graph implements Serializable {
      * Finds the longest path between the given start and end vertices.
      * @param vertexStartName : The starting point of our path search
      * @param vertexEndName : The Vertex we wish to reach
-     * @return An ArrayList of String or Edge objects, the longest path from Vertex A to Vertex B
+     * @return A Path object, the longest path from Vertex A to Vertex B
      */
-    public ArrayList<Vertex> findLongestPath(String vertexStartName, String vertexEndName) {
-        ArrayList<Vertex> longestPath = new ArrayList<>();
+    public Path findLongestPath(String vertexStartName, String vertexEndName) {
+        Path longestPath = new Path();
         return longestPath;
     }
 
