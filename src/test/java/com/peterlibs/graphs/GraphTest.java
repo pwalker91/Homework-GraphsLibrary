@@ -6,9 +6,12 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -241,31 +244,50 @@ class GraphTest {
             assertEquals(paths.size(), expectedNumPaths);
         }
     }
-    private void doTestFindShortestAllPaths(
-        Graph aGraph, String vertexStartName, String vertexEndName,
-        boolean shouldHavePath, int expectedTotalCost, int expectedSize
-    ) {
+    private void doTestFindAPath(
+            Graph aGraph,
+            String vertexStartName, String vertexEndName,
+            String graphMethodName,
+            boolean shouldHavePath, int expectedTotalCost, int expectedSize )
+        throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
+    {
+        //To make this method usable in multiple circumstances, we need to abstract the getting
+        // of the method we want to execute.
+        Method graphMethodRef = aGraph.getClass().getMethod(graphMethodName, String.class, String.class);
+
         if (vertexStartName.equals(vertexEndName)) {
             testLogger.info("Validating that a path from '{}' to itself is not allowed", vertexStartName);
-            assertThrows(
+            //Because I am using reflection AND I'm not using AssertJ, I need to assign the caught exception to
+            // a variable and extract the "root" cause from it. That Exception should be the Exception Type I expect
+            Throwable caughtException = assertThrows(
+                InvocationTargetException.class,
+                () -> graphMethodRef.invoke(aGraph, vertexStartName, vertexEndName)
+            );
+            assertEquals(
                 IllegalArgumentException.class,
-                () -> aGraph.findAllPaths(vertexStartName, vertexEndName)
+                caughtException.getCause().getClass()
             );
         }
         else {
             testLogger.info(
-                "Finding and Validating shortest path from '{}' to '{}'",
-                vertexStartName, vertexEndName
+                "Finding and Validating result of '{}' from '{}' to '{}'",
+                graphMethodName, vertexStartName, vertexEndName
             );
+
             if (shouldHavePath) {
-                Path aPath = aGraph.findShortestPath(vertexStartName, vertexEndName);
+                Path aPath = (Path) graphMethodRef.invoke(aGraph, vertexStartName, vertexEndName);
                 logPathAsString(aPath);
-                assertEquals(aPath.getCost(), expectedTotalCost);
-                assertEquals(aPath.getVertices().size(), expectedSize);
+                assertEquals(aPath.getCost(), expectedTotalCost, "Expected total cost incorrect");
+                assertEquals(aPath.getVertices().size(), expectedSize, "Expected path size incorrect");
             } else {
-                assertThrows(
+                Throwable caughtException = assertThrows(
+                    InvocationTargetException.class,
+                    () -> graphMethodRef.invoke(aGraph, vertexStartName, vertexEndName),
+                    "Expected no path"
+                );
+                assertEquals(
                     RuntimeException.class,
-                    () -> aGraph.findShortestPath(vertexStartName, vertexEndName)
+                    caughtException.getCause().getClass()
                 );
             }
         }
@@ -339,36 +361,38 @@ class GraphTest {
         }
 
         @Test
-        void findShortestPath() {
-            doTestFindShortestAllPaths(denseGraph, "v1", "v1", true, -1, -1);
-            doTestFindShortestAllPaths(denseGraph, "v1", "v2", true, 4, 2);
-            doTestFindShortestAllPaths(denseGraph, "v1", "v3", true, 3, 2);
-            doTestFindShortestAllPaths(denseGraph, "v1", "v4", true, 3, 3);
-            doTestFindShortestAllPaths(denseGraph, "v1", "v5", true, 2, 2);
+        void findShortestPath() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+            String graphMethodName =  "findShortestPath";
+            
+            doTestFindAPath(denseGraph, "v1", "v1", graphMethodName, true, -1, -1);
+            doTestFindAPath(denseGraph, "v1", "v2", graphMethodName, true, 4, 2);
+            doTestFindAPath(denseGraph, "v1", "v3", graphMethodName, true, 3, 2);
+            doTestFindAPath(denseGraph, "v1", "v4", graphMethodName, true, 3, 3);
+            doTestFindAPath(denseGraph, "v1", "v5", graphMethodName, true, 2, 2);
 
-            doTestFindShortestAllPaths(denseGraph, "v2", "v1", true, 5, 2);
-            doTestFindShortestAllPaths(denseGraph, "v2", "v2", true, -1, -1);
-            doTestFindShortestAllPaths(denseGraph, "v2", "v3", true, 5, 3);
-            doTestFindShortestAllPaths(denseGraph, "v2", "v4", true, 4, 3);
-            doTestFindShortestAllPaths(denseGraph, "v2", "v5", true, 3, 2);
+            doTestFindAPath(denseGraph, "v2", "v1", graphMethodName, true, 5, 2);
+            doTestFindAPath(denseGraph, "v2", "v2", graphMethodName, true, -1, -1);
+            doTestFindAPath(denseGraph, "v2", "v3", graphMethodName, true, 5, 3);
+            doTestFindAPath(denseGraph, "v2", "v4", graphMethodName, true, 4, 3);
+            doTestFindAPath(denseGraph, "v2", "v5", graphMethodName, true, 3, 2);
 
-            doTestFindShortestAllPaths(denseGraph, "v3", "v1", true, 5, 3);
-            doTestFindShortestAllPaths(denseGraph, "v3", "v2", true, 4, 2);
-            doTestFindShortestAllPaths(denseGraph, "v3", "v3", true, -1, -1);
-            doTestFindShortestAllPaths(denseGraph, "v3", "v4", true, 3, 2);
-            doTestFindShortestAllPaths(denseGraph, "v3", "v5", true, 7, 3);
+            doTestFindAPath(denseGraph, "v3", "v1", graphMethodName, true, 5, 3);
+            doTestFindAPath(denseGraph, "v3", "v2", graphMethodName, true, 4, 2);
+            doTestFindAPath(denseGraph, "v3", "v3", graphMethodName, true, -1, -1);
+            doTestFindAPath(denseGraph, "v3", "v4", graphMethodName, true, 3, 2);
+            doTestFindAPath(denseGraph, "v3", "v5", graphMethodName, true, 7, 3);
 
-            doTestFindShortestAllPaths(denseGraph, "v4", "v1", true, 2, 2);
-            doTestFindShortestAllPaths(denseGraph, "v4", "v2", true, 5, 2);
-            doTestFindShortestAllPaths(denseGraph, "v4", "v3", true, 5, 3);
-            doTestFindShortestAllPaths(denseGraph, "v4", "v4", true, -1, -1);
-            doTestFindShortestAllPaths(denseGraph, "v4", "v5", true, 4, 3);
+            doTestFindAPath(denseGraph, "v4", "v1", graphMethodName, true, 2, 2);
+            doTestFindAPath(denseGraph, "v4", "v2", graphMethodName, true, 5, 2);
+            doTestFindAPath(denseGraph, "v4", "v3", graphMethodName, true, 5, 3);
+            doTestFindAPath(denseGraph, "v4", "v4", graphMethodName, true, -1, -1);
+            doTestFindAPath(denseGraph, "v4", "v5", graphMethodName, true, 4, 3);
 
-            doTestFindShortestAllPaths(denseGraph, "v5", "v1", true, 3, 3);
-            doTestFindShortestAllPaths(denseGraph, "v5", "v2", true, 6, 3);
-            doTestFindShortestAllPaths(denseGraph, "v5", "v3", true, 2, 2);
-            doTestFindShortestAllPaths(denseGraph, "v5", "v4", true, 1, 2);
-            doTestFindShortestAllPaths(denseGraph, "v5", "v5", true, -1, -1);
+            doTestFindAPath(denseGraph, "v5", "v1", graphMethodName, true, 3, 3);
+            doTestFindAPath(denseGraph, "v5", "v2", graphMethodName, true, 6, 3);
+            doTestFindAPath(denseGraph, "v5", "v3", graphMethodName, true, 2, 2);
+            doTestFindAPath(denseGraph, "v5", "v4", graphMethodName, true, 1, 2);
+            doTestFindAPath(denseGraph, "v5", "v5", graphMethodName, true, -1, -1);
         }
 
         @Disabled
@@ -510,48 +534,98 @@ class GraphTest {
         }
 
         @Test
-        void findShortestPath() {
-//            doTestFindShortestAllPaths(sparseGraph, "v1", "v1", false, -1, -1);
-//            doTestFindShortestAllPaths(sparseGraph, "v1", "v2", true, 0, 0);
-//            doTestFindShortestAllPaths(sparseGraph, "v1", "v3", true, 0, 0);
-//            doTestFindShortestAllPaths(sparseGraph, "v1", "v4", true, 0, 0);
-//            doTestFindShortestAllPaths(sparseGraph, "v1", "v5", true, 0, 0);
-//            doTestFindShortestAllPaths(sparseGraph, "v1", "v6", true, 0, 0);
-//            doTestFindShortestAllPaths(sparseGraph, "v1", "v7", true, 0, 0);
-//            doTestFindShortestAllPaths(sparseGraph, "v1", "v8", true, 0, 0);
-//            doTestFindShortestAllPaths(sparseGraph, "v1", "v9", true, 0, 0);
-
-            //2
-
-            //3
-
-            //4
-
-            //5
+        void findShortestPath() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+            String graphMethodName =  "findShortestPath";
             
-            doTestFindShortestAllPaths(sparseGraph, "v6", "v1", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v6", "v2", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v6", "v3", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v6", "v4", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v6", "v5", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v6", "v6", false, -1, -1);
-            doTestFindShortestAllPaths(sparseGraph, "v6", "v7", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v6", "v8", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v6", "v9", false, 0, 0);
+            doTestFindAPath(sparseGraph, "v1", "v1", graphMethodName, false, -1, -1);
+            doTestFindAPath(sparseGraph, "v1", "v2", graphMethodName, true, 4, 2);
+            doTestFindAPath(sparseGraph, "v1", "v3", graphMethodName, true, 6, 3);
+            doTestFindAPath(sparseGraph, "v1", "v4", graphMethodName, true, 8, 3);
+            doTestFindAPath(sparseGraph, "v1", "v5", graphMethodName, true, 7, 3);
+            doTestFindAPath(sparseGraph, "v1", "v6", graphMethodName, true, 7, 3);
+            doTestFindAPath(sparseGraph, "v1", "v7", graphMethodName, true, 2, 2);
+            doTestFindAPath(sparseGraph, "v1", "v8", graphMethodName, true, 3, 2);
+            doTestFindAPath(sparseGraph, "v1", "v9", graphMethodName, true, 8, 4);
+            
+            doTestFindAPath(sparseGraph, "v2", "v1", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v2", "v2", graphMethodName, false, -1, -1);
+            doTestFindAPath(sparseGraph, "v2", "v3", graphMethodName, true, 2, 2);
+            doTestFindAPath(sparseGraph, "v2", "v4", graphMethodName, true, 5, 3);
+            doTestFindAPath(sparseGraph, "v2", "v5", graphMethodName, true, 3, 2);
+            doTestFindAPath(sparseGraph, "v2", "v6", graphMethodName, true, 7, 4);
+            doTestFindAPath(sparseGraph, "v2", "v7", graphMethodName, true, 6, 3);
+            doTestFindAPath(sparseGraph, "v2", "v8", graphMethodName, true, 5, 3);
+            doTestFindAPath(sparseGraph, "v2", "v9", graphMethodName, true, 4, 3);
 
-            //7
+            doTestFindAPath(sparseGraph, "v3", "v1", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v3", "v2", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v3", "v3", graphMethodName, false, -1, -1);
+            doTestFindAPath(sparseGraph, "v3", "v4", graphMethodName, true, 3, 2);
+            doTestFindAPath(sparseGraph, "v3", "v5", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v3", "v6", graphMethodName, true, 5, 3);
+            doTestFindAPath(sparseGraph, "v3", "v7", graphMethodName, true, 4, 2);
+            doTestFindAPath(sparseGraph, "v3", "v8", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v3", "v9", graphMethodName, true, 7, 3);
 
-            //8
+            doTestFindAPath(sparseGraph, "v4", "v1", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v4", "v2", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v4", "v3", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v4", "v4", graphMethodName, false, -1, -1);
+            doTestFindAPath(sparseGraph, "v4", "v5", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v4", "v6", graphMethodName, true, 2, 2);
+            doTestFindAPath(sparseGraph, "v4", "v7", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v4", "v8", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v4", "v9", graphMethodName, true, 4, 2);
 
-            doTestFindShortestAllPaths(sparseGraph, "v9", "v1", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v9", "v2", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v9", "v3", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v9", "v4", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v9", "v5", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v9", "v6", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v9", "v7", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v9", "v8", false, 0, 0);
-            doTestFindShortestAllPaths(sparseGraph, "v9", "v9", false, -1, -1);
+            doTestFindAPath(sparseGraph, "v5", "v1", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v5", "v2", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v5", "v3", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v5", "v4", graphMethodName, true, 7, 3);
+            doTestFindAPath(sparseGraph, "v5", "v5", graphMethodName, false, -1, -1);
+            doTestFindAPath(sparseGraph, "v5", "v6", graphMethodName, true, 9, 4);
+            doTestFindAPath(sparseGraph, "v5", "v7", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v5", "v8", graphMethodName, true, 2, 2);
+            doTestFindAPath(sparseGraph, "v5", "v9", graphMethodName, true, 1, 2);
+            
+            doTestFindAPath(sparseGraph, "v6", "v1", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v6", "v2", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v6", "v3", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v6", "v4", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v6", "v5", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v6", "v6", graphMethodName, false, -1, -1);
+            doTestFindAPath(sparseGraph, "v6", "v7", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v6", "v8", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v6", "v9", graphMethodName, false, 0, 0);
+
+            doTestFindAPath(sparseGraph, "v7", "v1", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v7", "v2", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v7", "v3", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v7", "v4", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v7", "v5", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v7", "v6", graphMethodName, true, 5, 2);
+            doTestFindAPath(sparseGraph, "v7", "v7", graphMethodName, false, -1, -1);
+            doTestFindAPath(sparseGraph, "v7", "v8", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v7", "v9", graphMethodName, false, 0, 0);
+
+            doTestFindAPath(sparseGraph, "v8", "v1", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v8", "v2", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v8", "v3", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v8", "v4", graphMethodName, true, 5, 2);
+            doTestFindAPath(sparseGraph, "v8", "v5", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v8", "v6", graphMethodName, true, 7, 3);
+            doTestFindAPath(sparseGraph, "v8", "v7", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v8", "v8", graphMethodName, false, -1, -1);
+            doTestFindAPath(sparseGraph, "v8", "v9", graphMethodName, true, 9, 3);
+
+            doTestFindAPath(sparseGraph, "v9", "v1", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v9", "v2", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v9", "v3", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v9", "v4", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v9", "v5", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v9", "v6", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v9", "v7", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v9", "v8", graphMethodName, false, 0, 0);
+            doTestFindAPath(sparseGraph, "v9", "v9", graphMethodName, false, -1, -1);
         }
 
         @Disabled
