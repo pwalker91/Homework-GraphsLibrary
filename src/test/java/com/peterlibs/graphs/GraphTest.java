@@ -206,371 +206,223 @@ class GraphTest {
         assertEquals(startVertex.getLabel(), startVertex2.getLabel());
         assertEquals(startVertex.getLabel(), startVertex2.getLabel());
     }
+    
+    //These are some helper functions for the testing of path logic
+    private void logPathAsString(Path aPath) {
+        ArrayList<String> aPathAsStrings = new ArrayList<>();
+        for (Vertex v: aPath.getVertices()) {
+            aPathAsStrings.add(v.getLabel());
+        }
+        testLogger.info(
+            "A path as a list of Vertex labels | {} | Total Cost = {}",
+            aPathAsStrings, aPath.getCost()
+        );
+    }
+    private void doTestFindAllPaths(
+        Graph aGraph, String vertexStartName, String vertexEndName,
+        int expectedSize
+    ) {
+        if (vertexStartName.equals(vertexEndName)) {
+            testLogger.info("Validating that a path from '{}' to itself is not allowed", vertexStartName);
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> aGraph.findAllPaths(vertexStartName, vertexEndName)
+            );
+        }
+        else {
+            testLogger.info(
+                "Finding and Validating all paths from '{}' to '{}'",
+                vertexStartName, vertexEndName
+            );
+            List<Path> paths = aGraph.findAllPaths(vertexStartName, vertexEndName);
+            for (Path aPath : paths) {
+                logPathAsString(aPath);
+            }
+            assertEquals(paths.size(), expectedSize);
+        }
+    }
+    private void doTestFindShortestAllPaths(
+        Graph aGraph, String vertexStartName, String vertexEndName,
+        boolean shouldHavePath, int expectedTotalCost, int expectedSize
+    ) {
+        if (vertexStartName.equals(vertexEndName)) {
+            testLogger.info("Validating that a path from '{}' to itself is not allowed", vertexStartName);
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> aGraph.findAllPaths(vertexStartName, vertexEndName)
+            );
+        }
+        else {
+            testLogger.info(
+                "Finding and Validating shortest path from '{}' to '{}'",
+                vertexStartName, vertexEndName
+            );
+            if (shouldHavePath) {
+                Path aPath = aGraph.findShortestPath(vertexStartName, vertexEndName);
+                logPathAsString(aPath);
+                assertEquals(aPath.getCost(), expectedTotalCost);
+                assertEquals(aPath.getVertices().size(), expectedSize);
+            } else {
+                assertThrows(
+                    RuntimeException.class,
+                    () -> aGraph.findShortestPath(vertexStartName, vertexEndName)
+                );
+            }
+        }
+    }
 
     @Nested
-    class GraphPathTest {
+    class DenseGraphPathTest {
 
-        Graph testGraph;
+        Graph denseGraph;
 
         @BeforeEach
         public void init() {
-            testLogger.info("Creating new Graph");
-            testGraph = new Graph();
+            testLogger.info("Creating new dense Graph");
+            denseGraph = new Graph();
 
-            testLogger.info("Adding vertices");
-            testGraph.addVertex("v1");
-            testGraph.addVertex("v2");
-            testGraph.addVertex("v3");
-            testGraph.addVertex("v4");
-            testGraph.addVertex("v5");
+            testLogger.info("Adding vertices to dense Graph");
+            denseGraph.addVertex("v1");
+            denseGraph.addVertex("v2");
+            denseGraph.addVertex("v3");
+            denseGraph.addVertex("v4");
+            denseGraph.addVertex("v5");
 
-            testLogger.info("Adding edges");
-            assertDoesNotThrow(() -> testGraph.addEdge("v1", "v2", 4));
-            assertDoesNotThrow(() -> testGraph.addEdge("v1", "v3", 3));
-            assertDoesNotThrow(() -> testGraph.addEdge("v1", "v5", 2));
-            assertDoesNotThrow(() -> testGraph.addEdge("v2", "v1", 5));
-            assertDoesNotThrow(() -> testGraph.addEdge("v2", "v3", 6));
-            assertDoesNotThrow(() -> testGraph.addEdge("v2", "v4", 8));
-            assertDoesNotThrow(() -> testGraph.addEdge("v2", "v5", 3));
-            assertDoesNotThrow(() -> testGraph.addEdge("v3", "v2", 4));
-            assertDoesNotThrow(() -> testGraph.addEdge("v3", "v4", 3));
-            assertDoesNotThrow(() -> testGraph.addEdge("v4", "v1", 2));
-            assertDoesNotThrow(() -> testGraph.addEdge("v4", "v2", 5));
-            assertDoesNotThrow(() -> testGraph.addEdge("v4", "v3", 6));
-            assertDoesNotThrow(() -> testGraph.addEdge("v5", "v3", 2));
-            assertDoesNotThrow(() -> testGraph.addEdge("v5", "v4", 1));
-        }
-
-        void logPathAsString(Path aPath) {
-            ArrayList<String> aPathAsStrings = new ArrayList<>();
-            for (Vertex v: aPath.getVertices()) {
-                aPathAsStrings.add(v.getLabel());
-            }
-            testLogger.info(
-                "A path as a list of Vertex labels | {} | Total Cost = {}",
-                aPathAsStrings, aPath.getCost()
-            );
+            testLogger.info("Adding edges to dense Graph");
+            denseGraph.addEdge("v1", "v2", 4);
+            denseGraph.addEdge("v1", "v3", 3);
+            denseGraph.addEdge("v1", "v5", 2);
+            denseGraph.addEdge("v2", "v1", 5);
+            denseGraph.addEdge("v2", "v3", 6);
+            denseGraph.addEdge("v2", "v4", 8);
+            denseGraph.addEdge("v2", "v5", 3);
+            denseGraph.addEdge("v3", "v2", 4);
+            denseGraph.addEdge("v3", "v4", 3);
+            denseGraph.addEdge("v4", "v1", 2);
+            denseGraph.addEdge("v4", "v2", 5);
+            denseGraph.addEdge("v4", "v3", 6);
+            denseGraph.addEdge("v5", "v3", 2);
+            denseGraph.addEdge("v5", "v4", 1);
         }
 
         @Test
         void findAllPaths() {
-            List<Path> paths;
+            doTestFindAllPaths(denseGraph, "v1", "v1", -1);
+            doTestFindAllPaths(denseGraph, "v1", "v2", 7);
+            doTestFindAllPaths(denseGraph, "v1", "v3", 8);
+            doTestFindAllPaths(denseGraph, "v1", "v4", 10);
+            doTestFindAllPaths(denseGraph, "v1", "v5", 4);
 
-            /*
-                Vertex 'v1' Starting Point
-             */
-            testLogger.info("Finding and Validating paths from 'v1' to 'v2'");
-            paths = testGraph.findAllPaths("v1", "v2");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 7);
+            doTestFindAllPaths(denseGraph, "v2", "v1", 5);
+            doTestFindAllPaths(denseGraph, "v2", "v2", -1);
+            doTestFindAllPaths(denseGraph, "v2", "v3", 10);
+            doTestFindAllPaths(denseGraph, "v2", "v4", 7);
+            doTestFindAllPaths(denseGraph, "v2", "v5", 4);
 
-            testLogger.info("Finding and Validating paths from 'v1' to 'v3'");
-            paths = testGraph.findAllPaths("v1", "v3");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 8);
+            doTestFindAllPaths(denseGraph, "v3", "v1", 5);
+            doTestFindAllPaths(denseGraph, "v3", "v2", 3);
+            doTestFindAllPaths(denseGraph, "v3", "v3", -1);
+            doTestFindAllPaths(denseGraph, "v3", "v4", 4);
+            doTestFindAllPaths(denseGraph, "v3", "v5", 7);
 
-            testLogger.info("Finding and Validating paths from 'v1' to 'v4'");
-            paths = testGraph.findAllPaths("v1", "v4");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 10);
+            doTestFindAllPaths(denseGraph, "v4", "v1", 3);
+            doTestFindAllPaths(denseGraph, "v4", "v2", 5);
+            doTestFindAllPaths(denseGraph, "v4", "v3", 9);
+            doTestFindAllPaths(denseGraph, "v4", "v4", -1);
+            doTestFindAllPaths(denseGraph, "v4", "v5", 7);
 
-            testLogger.info("Finding and Validating paths from 'v1' to 'v5'");
-            paths = testGraph.findAllPaths("v1", "v5");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 4);
+            doTestFindAllPaths(denseGraph, "v5", "v1", 7);
+            doTestFindAllPaths(denseGraph, "v5", "v2", 7);
+            doTestFindAllPaths(denseGraph, "v5", "v3", 6);
+            doTestFindAllPaths(denseGraph, "v5", "v4", 3);
+            doTestFindAllPaths(denseGraph, "v5", "v5", -1);
+        }
 
-            testLogger.info("Validating that a path from 'v1' to itself is not allowed");
-            assertThrows(
-                IllegalArgumentException.class,
-                () -> testGraph.findAllPaths("v1", "v1")
-            );
+        @Test
+        void findShortestPath() {
+            doTestFindShortestAllPaths(denseGraph, "v1", "v1", true, -1, -1);
+            doTestFindShortestAllPaths(denseGraph, "v1", "v2", true, 4, 2);
+            doTestFindShortestAllPaths(denseGraph, "v1", "v3", true, 3, 2);
+            doTestFindShortestAllPaths(denseGraph, "v1", "v4", true, 3, 3);
+            doTestFindShortestAllPaths(denseGraph, "v1", "v5", true, 2, 2);
 
-            /*
-                Vertex 'v2' Starting Point
-             */
-            testLogger.info("Finding and Validating paths from 'v2' to 'v1'");
-            paths = testGraph.findAllPaths("v2", "v1");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 5);
+            doTestFindShortestAllPaths(denseGraph, "v2", "v1", true, 5, 2);
+            doTestFindShortestAllPaths(denseGraph, "v2", "v2", true, -1, -1);
+            doTestFindShortestAllPaths(denseGraph, "v2", "v3", true, 5, 3);
+            doTestFindShortestAllPaths(denseGraph, "v2", "v4", true, 4, 3);
+            doTestFindShortestAllPaths(denseGraph, "v2", "v5", true, 3, 2);
 
-            testLogger.info("Finding and Validating paths from 'v2' to 'v3'");
-            paths = testGraph.findAllPaths("v2", "v3");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 10);
+            doTestFindShortestAllPaths(denseGraph, "v3", "v1", true, 5, 3);
+            doTestFindShortestAllPaths(denseGraph, "v3", "v2", true, 4, 2);
+            doTestFindShortestAllPaths(denseGraph, "v3", "v3", true, -1, -1);
+            doTestFindShortestAllPaths(denseGraph, "v3", "v4", true, 3, 2);
+            doTestFindShortestAllPaths(denseGraph, "v3", "v5", true, 7, 3);
 
-            testLogger.info("Finding and Validating paths from 'v2' to 'v4'");
-            paths = testGraph.findAllPaths("v2", "v4");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 7);
+            doTestFindShortestAllPaths(denseGraph, "v4", "v1", true, 2, 2);
+            doTestFindShortestAllPaths(denseGraph, "v4", "v2", true, 5, 2);
+            doTestFindShortestAllPaths(denseGraph, "v4", "v3", true, 4, 2);
+            doTestFindShortestAllPaths(denseGraph, "v4", "v4", true, -1, -1);
+            doTestFindShortestAllPaths(denseGraph, "v4", "v5", true, 4, 3);
 
-            testLogger.info("Finding and Validating paths from 'v2' to 'v5'");
-            paths = testGraph.findAllPaths("v2", "v5");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 4);
+            doTestFindShortestAllPaths(denseGraph, "v5", "v1", true, 3, 3);
+            doTestFindShortestAllPaths(denseGraph, "v5", "v2", true, 6, 3);
+            doTestFindShortestAllPaths(denseGraph, "v5", "v3", true, 2, 2);
+            doTestFindShortestAllPaths(denseGraph, "v5", "v4", true, 1, 2);
+            doTestFindShortestAllPaths(denseGraph, "v5", "v5", true, -1, -1);
+        }
 
-            testLogger.info("Validating that a path from 'v2' to itself is not allowed");
-            assertThrows(
-                IllegalArgumentException.class,
-                () -> testGraph.findAllPaths("v2", "v2")
-            );
+        @Disabled
+        @Test
+        void findLongestPath() {
+        }
 
-            /*
-                Vertex 'v3' Starting Point
-             */
-            testLogger.info("Finding and Validating paths from 'v3' to 'v1'");
-            paths = testGraph.findAllPaths("v3", "v1");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 5);
+    }
+    
+    @Nested
+    class SparseGraphPathTest {
 
-            testLogger.info("Finding and Validating paths from 'v3' to 'v2'");
-            paths = testGraph.findAllPaths("v3", "v2");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 3);
+        Graph sparseGraph;
 
-            testLogger.info("Finding and Validating paths from 'v3' to 'v4'");
-            paths = testGraph.findAllPaths("v3", "v4");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 4);
+        @BeforeEach
+        public void init() {
+            testLogger.info("Creating new sparse Graph");
+            sparseGraph = new Graph();
 
-            testLogger.info("Finding and Validating paths from 'v3' to 'v5'");
-            paths = testGraph.findAllPaths("v3", "v5");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 7);
+            testLogger.info("Adding vertices to dense Graph");
+            sparseGraph.addVertex("v1");
+            sparseGraph.addVertex("v2");
+            sparseGraph.addVertex("v3");
+            sparseGraph.addVertex("v4");
+            sparseGraph.addVertex("v5");
+            sparseGraph.addVertex("v6");
+            sparseGraph.addVertex("v7");
+            sparseGraph.addVertex("v8");
+            sparseGraph.addVertex("v9");
 
-            testLogger.info("Validating that a path from 'v3' to itself is not allowed");
-            assertThrows(
-                IllegalArgumentException.class,
-                () -> testGraph.findAllPaths("v3", "v3")
-            );
+            testLogger.info("Adding edges to dense Graph");
+            sparseGraph.addEdge("v1", "v2", 4);
+            sparseGraph.addEdge("v1", "v7", 2);
+            sparseGraph.addEdge("v1", "v8", 3);
+            sparseGraph.addEdge("v2", "v3", 2);
+            sparseGraph.addEdge("v2", "v5", 3);
+            sparseGraph.addEdge("v2", "v9", 5);
+            sparseGraph.addEdge("v3", "v4", 3);
+            sparseGraph.addEdge("v3", "v7", 4);
+            sparseGraph.addEdge("v4", "v6", 2);
+            sparseGraph.addEdge("v4", "v9", 4);
+            sparseGraph.addEdge("v5", "v8", 2);
+            sparseGraph.addEdge("v5", "v9", 1);
+            sparseGraph.addEdge("v8", "v4", 5);
+        }
 
-            /*
-                Vertex 'v4' Starting Point
-             */
-            testLogger.info("Finding and Validating paths from 'v4' to 'v1'");
-            paths = testGraph.findAllPaths("v4", "v1");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 3);
-
-            testLogger.info("Finding and Validating paths from 'v4' to 'v2'");
-            paths = testGraph.findAllPaths("v4", "v2");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 5);
-
-            testLogger.info("Finding and Validating paths from 'v4' to 'v3'");
-            paths = testGraph.findAllPaths("v4", "v3");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 9);
-
-            testLogger.info("Finding and Validating paths from 'v4' to 'v5'");
-            paths = testGraph.findAllPaths("v4", "v5");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 7);
-
-            testLogger.info("Validating that a path from 'v4' to itself is not allowed");
-            assertThrows(
-                IllegalArgumentException.class,
-                () -> testGraph.findAllPaths("v4", "v4")
-            );
-
-            /*
-                Vertex 'v5' Starting Point
-             */
-            testLogger.info("Finding and Validating paths from 'v5' to 'v1'");
-            paths = testGraph.findAllPaths("v5", "v1");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 7);
-
-            testLogger.info("Finding and Validating paths from 'v5' to 'v2'");
-            paths = testGraph.findAllPaths("v5", "v2");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 7);
-
-            testLogger.info("Finding and Validating paths from 'v5' to 'v3'");
-            paths = testGraph.findAllPaths("v5", "v3");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 6);
-
-            testLogger.info("Finding and Validating paths from 'v5' to 'v5'");
-            paths = testGraph.findAllPaths("v5", "v4");
-            for (Path aPath: paths) { logPathAsString(aPath); }
-            assertEquals(paths.size(), 3);
-
-            testLogger.info("Validating that a path from 'v5' to itself is not allowed");
-            assertThrows(
-                IllegalArgumentException.class,
-                () -> testGraph.findAllPaths("v5", "v5")
-            );
+        @Disabled
+        @Test
+        void findAllPaths() {
         }
 
         @Disabled
         @Test
         void findShortestPath() {
-            Path foundPath;
-
-            /*
-                Vertex 'v1' Starting Point
-             */
-            testLogger.info("Finding and Validating paths from 'v1' to 'v2'");
-            foundPath = testGraph.findShortestPath("v1", "v2");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 4);
-            assertEquals(foundPath.getVertices().size(), 2);
-
-            testLogger.info("Finding and Validating paths from 'v1' to 'v3'");
-            foundPath = testGraph.findShortestPath("v1", "v3");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 3);
-            assertEquals(foundPath.getVertices().size(), 2);
-
-            testLogger.info("Finding and Validating paths from 'v1' to 'v4'");
-            foundPath = testGraph.findShortestPath("v1", "v4");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 3);
-            assertEquals(foundPath.getVertices().size(), 3);
-
-            testLogger.info("Finding and Validating paths from 'v1' to 'v5'");
-            foundPath = testGraph.findShortestPath("v1", "v5");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 2);
-            assertEquals(foundPath.getVertices().size(), 2);
-
-            testLogger.info("Validating that a path from 'v1' to itself is not allowed");
-            assertThrows(
-                IllegalArgumentException.class,
-                () -> testGraph.findShortestPath("v1", "v1")
-            );
-
-            /*
-                Vertex 'v2' Starting Point
-             */
-            testLogger.info("Finding and Validating paths from 'v2' to 'v1'");
-            foundPath = testGraph.findShortestPath("v2", "v1");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 5);
-            assertEquals(foundPath.getVertices().size(), 2);
-
-            testLogger.info("Finding and Validating paths from 'v2' to 'v3'");
-            foundPath = testGraph.findShortestPath("v2", "v3");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 5);
-            assertEquals(foundPath.getVertices().size(), 3);
-
-            testLogger.info("Finding and Validating paths from 'v2' to 'v4'");
-            foundPath = testGraph.findShortestPath("v2", "v4");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 4);
-            assertEquals(foundPath.getVertices().size(), 3);
-
-            testLogger.info("Finding and Validating paths from 'v2' to 'v5'");
-            foundPath = testGraph.findShortestPath("v2", "v5");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 3);
-            assertEquals(foundPath.getVertices().size(), 2);
-
-            testLogger.info("Validating that a path from 'v2' to itself is not allowed");
-            assertThrows(
-                IllegalArgumentException.class,
-                () -> testGraph.findShortestPath("v2", "v2")
-            );
-
-            /*
-                Vertex 'v3' Starting Point
-             */
-            testLogger.info("Finding and Validating paths from 'v3' to 'v1'");
-            foundPath = testGraph.findShortestPath("v3", "v1");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 5);
-            assertEquals(foundPath.getVertices().size(), 3);
-
-            testLogger.info("Finding and Validating paths from 'v3' to 'v2'");
-            foundPath = testGraph.findShortestPath("v3", "v2");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 4);
-            assertEquals(foundPath.getVertices().size(), 2);
-
-            testLogger.info("Finding and Validating paths from 'v3' to 'v4'");
-            foundPath = testGraph.findShortestPath("v3", "v4");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 3);
-            assertEquals(foundPath.getVertices().size(), 2);
-
-            testLogger.info("Finding and Validating paths from 'v3' to 'v5'");
-            foundPath = testGraph.findShortestPath("v3", "v5");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 7);
-            assertEquals(foundPath.getVertices().size(), 3);
-
-            testLogger.info("Validating that a path from 'v3' to itself is not allowed");
-            assertThrows(
-                IllegalArgumentException.class,
-                () -> testGraph.findShortestPath("v3", "v3")
-            );
-
-            /*
-                Vertex 'v4' Starting Point
-             */
-            testLogger.info("Finding and Validating paths from 'v4' to 'v1'");
-            foundPath = testGraph.findShortestPath("v4", "v1");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 2);
-            assertEquals(foundPath.getVertices().size(), 2);
-
-            testLogger.info("Finding and Validating paths from 'v4' to 'v2'");
-            foundPath = testGraph.findShortestPath("v4", "v2");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 5);
-            assertEquals(foundPath.getVertices().size(), 2);
-
-            testLogger.info("Finding and Validating paths from 'v4' to 'v3'");
-            foundPath = testGraph.findShortestPath("v4", "v3");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 4);
-            assertEquals(foundPath.getVertices().size(), 2);
-
-            testLogger.info("Finding and Validating paths from 'v4' to 'v5'");
-            foundPath = testGraph.findShortestPath("v4", "v5");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 4);
-            assertEquals(foundPath.getVertices().size(), 3);
-
-            testLogger.info("Validating that a path from 'v4' to itself is not allowed");
-            assertThrows(
-                IllegalArgumentException.class,
-                () -> testGraph.findShortestPath("v4", "v4")
-            );
-
-            /*
-                Vertex 'v5' Starting Point
-             */
-            testLogger.info("Finding and Validating paths from 'v5' to 'v1'");
-            foundPath = testGraph.findShortestPath("v5", "v1");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 3);
-            assertEquals(foundPath.getVertices().size(), 3);
-
-            testLogger.info("Finding and Validating paths from 'v5' to 'v2'");
-            foundPath = testGraph.findShortestPath("v5", "v2");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 6);
-            assertEquals(foundPath.getVertices().size(), 3);
-
-            testLogger.info("Finding and Validating paths from 'v5' to 'v3'");
-            foundPath = testGraph.findShortestPath("v5", "v3");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 2);
-            assertEquals(foundPath.getVertices().size(), 2);
-
-            testLogger.info("Finding and Validating paths from 'v5' to 'v5'");
-            foundPath = testGraph.findShortestPath("v5", "v4");
-            logPathAsString(foundPath);
-            assertEquals(foundPath.getCost(), 1);
-            assertEquals(foundPath.getVertices().size(), 2);
-
-            testLogger.info("Validating that a path from 'v5' to itself is not allowed");
-            assertThrows(
-                IllegalArgumentException.class,
-                () -> testGraph.findShortestPath("v5", "v5")
-            );
         }
 
         @Disabled
