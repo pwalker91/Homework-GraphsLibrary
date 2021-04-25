@@ -85,9 +85,11 @@ class Edge implements Serializable {
 
     @Override
     public String toString() {
-        return this.getLabel()+"|"+
-            "'"+this.getVertexStart().getLabel()+"'-->'"+this.getVertexEnd().getLabel()+"'|"+
-            super.toString();
+        return
+            this.getLabel()+
+                "("+super.toString()+")"+
+                "("+this.getVertexStart().getLabel()+"-->"+this.getVertexEnd().getLabel()+")"
+            ;
     }
 
 }
