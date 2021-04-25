@@ -388,10 +388,17 @@ public class Graph implements Serializable {
                 itsAPath = shortestPathSearchForDestination(
                     anEdge.getVertexEnd(), vertexDestination, newVisitedVertices
                 );
+                if (itsAPath == null) {
+                    classLogger.trace("No paths to the destination could be found. Continuing to the next Edge.");
+                    continue;
+                }
                 for (Edge pathEdge: itsAPath) { thisPathCost += pathEdge.getWeight(); }
+                //And now add the Edge we are currently on
+                itsAPath.add(0, anEdge);
+                thisPathCost += anEdge.getWeight();
             }
 
-            classLogger.trace("Testing that we have a path to compare with what the current shortest is");
+            classLogger.trace("Testing that we found a path to compare with what the current shortest is.");
             if (itsAPath.size() == 0) {
                 classLogger.trace("No path to destination from here. Continuing to next edge");
                 continue;
@@ -411,17 +418,16 @@ public class Graph implements Serializable {
                 // return whichever one it found first, which may not ALWAYS be the same path.
             ) {
                 classLogger.trace("We currently do not have a valid shortest path, or the newly found path is shorter");
-                foundPath = itsAPath;
-                foundPath.add(0, anEdge);
+                foundPath = new ArrayList<>(itsAPath);
                 lowestTotalCost = thisPathCost;
             }
         }
         if (lowestTotalCost == -1) {
-            classLogger.debug("No possible path was found to destination");
+            classLogger.debug("No possible shortest path was found to destination.");
             return null;
         }
         else {
-            classLogger.debug("Path found. size={} cost={}", foundPath.size(), lowestTotalCost);
+            classLogger.debug("Shortest Path found. size={} cost={}", foundPath.size(), lowestTotalCost);
             return foundPath;
         }
     }
@@ -447,7 +453,10 @@ public class Graph implements Serializable {
                 "No path could be found from '%s' to '%s'".formatted( vertexStartName, vertexEndName )
             );
         }
-        return this.makeIntoPath(foundPath);
+        else {
+            classLogger.debug("Found the shortest path | {}", foundPath);
+            return this.makeIntoPath(foundPath);
+        }
     }
 
     /**

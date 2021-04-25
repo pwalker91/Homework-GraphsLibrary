@@ -360,7 +360,7 @@ class GraphTest {
 
             doTestFindShortestAllPaths(denseGraph, "v4", "v1", true, 2, 2);
             doTestFindShortestAllPaths(denseGraph, "v4", "v2", true, 5, 2);
-            doTestFindShortestAllPaths(denseGraph, "v4", "v3", true, 4, 2);
+            doTestFindShortestAllPaths(denseGraph, "v4", "v3", true, 5, 3);
             doTestFindShortestAllPaths(denseGraph, "v4", "v4", true, -1, -1);
             doTestFindShortestAllPaths(denseGraph, "v4", "v5", true, 4, 3);
 
