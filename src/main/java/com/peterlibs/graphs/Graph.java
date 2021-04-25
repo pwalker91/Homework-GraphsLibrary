@@ -277,12 +277,16 @@ public class Graph implements Serializable {
         //The `clone` method should be fine in this situation because our values
         // are all going to be references to objects. Although, my more rudimentary
         // experience with Java may had made this a spectacular blunder to learn from.
-        ArrayList<Vertex> newVisitedVertices = new ArrayList<>(visitedVertices);
+        ArrayList<Vertex> newVisitedVertices;
+        if (visitedVertices == null)
+            newVisitedVertices = new ArrayList<>();
+        else
+            newVisitedVertices = new ArrayList<>(visitedVertices);
         newVisitedVertices.add(vertexStart);
 
         for (Edge anEdge: vertexStart.getEdges()) {
             //If we have already visited the vertex, skip doing anything more
-            if (visitedVertices.contains(anEdge.getVertexEnd()))
+            if (newVisitedVertices.contains(anEdge.getVertexEnd()))
                 continue;
 
             ArrayList<Edge> itsAPath = new ArrayList<>();
@@ -325,6 +329,7 @@ public class Graph implements Serializable {
             classLogger.debug("Was given the same vertex for the start and end.");
             throw new IllegalArgumentException("Starting Vertex and Ending Vertex cannot be the same");
         }
+
         ArrayList<Vertex> visitedVertices = new ArrayList<>();
         classLogger.debug("Calling recursive helper function to get all paths.");
         ArrayList<ArrayList<Edge>> foundPaths = allPathSearchForDestination(vertexStart, vertexEnd, visitedVertices);
