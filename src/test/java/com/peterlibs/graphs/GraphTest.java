@@ -412,6 +412,7 @@ class GraphTest {
             sparseGraph.addEdge("v4", "v9", 4);
             sparseGraph.addEdge("v5", "v8", 2);
             sparseGraph.addEdge("v5", "v9", 1);
+            sparseGraph.addEdge("v7", "v6", 5);
             sparseGraph.addEdge("v8", "v4", 5);
         }
 
