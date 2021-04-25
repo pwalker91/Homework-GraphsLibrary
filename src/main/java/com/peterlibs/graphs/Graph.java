@@ -350,8 +350,34 @@ public class Graph implements Serializable {
      * @param visitedVertices
      * @return
      */
-    private Edge shortestPathSearchForDestination(Vertex vertexStart, Vertex vertexEnd, ArrayList<Vertex> visitedVertices) {
+    private ArrayList<Edge> shortestPathSearchForDestination(Vertex vertexStart, Vertex vertexEnd, ArrayList<Vertex> visitedVertices) {
+        ArrayList<Edge> foundPath = new ArrayList<>();
+
+        ArrayList<Vertex> newVisitedVertices;
+        if (visitedVertices == null)
+            newVisitedVertices = new ArrayList<>();
+        else
+            newVisitedVertices = new ArrayList<>(visitedVertices);
+        newVisitedVertices.add(vertexStart);
+
         //TODO: implement
+
+        //lowest cost and num hops
+        //same cost and hops?
+
+        //        create a queue Q
+        //        enqueue v onto Q
+        //        mark v
+        //        while Q is not empty do
+        //            w ← Q.dequeue()
+        //            if w is what we are looking for then
+        //                return w
+        //            for all edges e in G.adjacentEdges(w) do
+        //                x ← G.adjacentVertex(w, e)
+        //                if x is not marked then
+        //                    mark x
+        //                    enqueue x onto Q
+        //        return null
         return null;
     }
     /**
@@ -361,23 +387,44 @@ public class Graph implements Serializable {
      * @return A Path object, the shortest path from Vertex A to Vertex B
      */
     public Path findShortestPath(String vertexStartName, String vertexEndName) {
-        Path shortestPath = new Path();
-//        create a queue Q
-//        enqueue v onto Q
-//        mark v
-//        while Q is not empty do
-//            w ← Q.dequeue()
-//            if w is what we are looking for then
-//                return w
-//            for all edges e in G.adjacentEdges(w) do
-//                x ← G.adjacentVertex(w, e)
-//                if x is not marked then
-//                    mark x
-//                    enqueue x onto Q
-//        return null
-        return shortestPath;
+        Vertex vertexStart = this.getVertex(vertexStartName);
+        Vertex vertexEnd = this.getVertex(vertexEndName);
+        if (vertexStart == vertexEnd) {
+            classLogger.debug("Was given the same vertex for the start and end.");
+            throw new IllegalArgumentException("Starting Vertex and Ending Vertex cannot be the same");
+        }
+
+        classLogger.debug("Calling recursive helper function to get shortest path.");
+        ArrayList<Edge> foundPath = shortestPathSearchForDestination(vertexStart, vertexEnd, null);
+        if (foundPath == null) {
+            classLogger.debug("No path found from '{}' to '{}'", vertexStartName, vertexEndName);
+            throw new RuntimeException(
+                "No path could be found from '%s' to '%s'".formatted( vertexStartName, vertexEndName )
+            );
+        }
+        return this.makeIntoPath(foundPath);
     }
 
+    /**
+     *
+     * @param vertexStart
+     * @param vertexEnd
+     * @param visitedVertices
+     * @return
+     */
+    private ArrayList<Edge> longestPathSearchForDestination(Vertex vertexStart, Vertex vertexEnd, ArrayList<Vertex> visitedVertices) {
+        ArrayList<Edge> foundPath = new ArrayList<>();
+
+        ArrayList<Vertex> newVisitedVertices;
+        if (visitedVertices == null)
+            newVisitedVertices = new ArrayList<>();
+        else
+            newVisitedVertices = new ArrayList<>(visitedVertices);
+        newVisitedVertices.add(vertexStart);
+
+        //TODO: implement
+        return null;
+    }
     /**
      * Finds the longest path between the given start and end vertices.
      * @param vertexStartName : The starting point of our path search
@@ -385,8 +432,22 @@ public class Graph implements Serializable {
      * @return A Path object, the longest path from Vertex A to Vertex B
      */
     public Path findLongestPath(String vertexStartName, String vertexEndName) {
-        Path longestPath = new Path();
-        return longestPath;
+        Vertex vertexStart = this.getVertex(vertexStartName);
+        Vertex vertexEnd = this.getVertex(vertexEndName);
+        if (vertexStart == vertexEnd) {
+            classLogger.debug("Was given the same vertex for the start and end.");
+            throw new IllegalArgumentException("Starting Vertex and Ending Vertex cannot be the same");
+        }
+
+        classLogger.debug("Calling recursive helper function to get longest path.");
+        ArrayList<Edge> foundPath = longestPathSearchForDestination(vertexStart, vertexEnd, null);
+        if (foundPath == null) {
+            classLogger.debug("No path found from '{}' to '{}'", vertexStartName, vertexEndName);
+            throw new RuntimeException(
+                "No path could be found from '%s' to '%s'".formatted( vertexStartName, vertexEndName )
+            );
+        }
+        return this.makeIntoPath(foundPath);
     }
 
 }

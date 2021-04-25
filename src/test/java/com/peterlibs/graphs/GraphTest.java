@@ -402,10 +402,178 @@ class GraphTest {
             );
         }
 
+        @Disabled
         @Test
         void findShortestPath() {
+            Path foundPath;
+
+            /*
+                Vertex 'v1' Starting Point
+             */
+            testLogger.info("Finding and Validating paths from 'v1' to 'v2'");
+            foundPath = testGraph.findShortestPath("v1", "v2");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 4);
+            assertEquals(foundPath.getVertices().size(), 2);
+
+            testLogger.info("Finding and Validating paths from 'v1' to 'v3'");
+            foundPath = testGraph.findShortestPath("v1", "v3");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 3);
+            assertEquals(foundPath.getVertices().size(), 2);
+
+            testLogger.info("Finding and Validating paths from 'v1' to 'v4'");
+            foundPath = testGraph.findShortestPath("v1", "v4");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 3);
+            assertEquals(foundPath.getVertices().size(), 3);
+
+            testLogger.info("Finding and Validating paths from 'v1' to 'v5'");
+            foundPath = testGraph.findShortestPath("v1", "v5");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 2);
+            assertEquals(foundPath.getVertices().size(), 2);
+
+            testLogger.info("Validating that a path from 'v1' to itself is not allowed");
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> testGraph.findShortestPath("v1", "v1")
+            );
+
+            /*
+                Vertex 'v2' Starting Point
+             */
+            testLogger.info("Finding and Validating paths from 'v2' to 'v1'");
+            foundPath = testGraph.findShortestPath("v2", "v1");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 5);
+            assertEquals(foundPath.getVertices().size(), 2);
+
+            testLogger.info("Finding and Validating paths from 'v2' to 'v3'");
+            foundPath = testGraph.findShortestPath("v2", "v3");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 5);
+            assertEquals(foundPath.getVertices().size(), 3);
+
+            testLogger.info("Finding and Validating paths from 'v2' to 'v4'");
+            foundPath = testGraph.findShortestPath("v2", "v4");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 4);
+            assertEquals(foundPath.getVertices().size(), 3);
+
+            testLogger.info("Finding and Validating paths from 'v2' to 'v5'");
+            foundPath = testGraph.findShortestPath("v2", "v5");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 3);
+            assertEquals(foundPath.getVertices().size(), 2);
+
+            testLogger.info("Validating that a path from 'v2' to itself is not allowed");
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> testGraph.findShortestPath("v2", "v2")
+            );
+
+            /*
+                Vertex 'v3' Starting Point
+             */
+            testLogger.info("Finding and Validating paths from 'v3' to 'v1'");
+            foundPath = testGraph.findShortestPath("v3", "v1");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 5);
+            assertEquals(foundPath.getVertices().size(), 3);
+
+            testLogger.info("Finding and Validating paths from 'v3' to 'v2'");
+            foundPath = testGraph.findShortestPath("v3", "v2");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 4);
+            assertEquals(foundPath.getVertices().size(), 2);
+
+            testLogger.info("Finding and Validating paths from 'v3' to 'v4'");
+            foundPath = testGraph.findShortestPath("v3", "v4");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 3);
+            assertEquals(foundPath.getVertices().size(), 2);
+
+            testLogger.info("Finding and Validating paths from 'v3' to 'v5'");
+            foundPath = testGraph.findShortestPath("v3", "v5");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 7);
+            assertEquals(foundPath.getVertices().size(), 3);
+
+            testLogger.info("Validating that a path from 'v3' to itself is not allowed");
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> testGraph.findShortestPath("v3", "v3")
+            );
+
+            /*
+                Vertex 'v4' Starting Point
+             */
+            testLogger.info("Finding and Validating paths from 'v4' to 'v1'");
+            foundPath = testGraph.findShortestPath("v4", "v1");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 2);
+            assertEquals(foundPath.getVertices().size(), 2);
+
+            testLogger.info("Finding and Validating paths from 'v4' to 'v2'");
+            foundPath = testGraph.findShortestPath("v4", "v2");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 5);
+            assertEquals(foundPath.getVertices().size(), 2);
+
+            testLogger.info("Finding and Validating paths from 'v4' to 'v3'");
+            foundPath = testGraph.findShortestPath("v4", "v3");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 4);
+            assertEquals(foundPath.getVertices().size(), 2);
+
+            testLogger.info("Finding and Validating paths from 'v4' to 'v5'");
+            foundPath = testGraph.findShortestPath("v4", "v5");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 4);
+            assertEquals(foundPath.getVertices().size(), 3);
+
+            testLogger.info("Validating that a path from 'v4' to itself is not allowed");
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> testGraph.findShortestPath("v4", "v4")
+            );
+
+            /*
+                Vertex 'v5' Starting Point
+             */
+            testLogger.info("Finding and Validating paths from 'v5' to 'v1'");
+            foundPath = testGraph.findShortestPath("v5", "v1");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 3);
+            assertEquals(foundPath.getVertices().size(), 3);
+
+            testLogger.info("Finding and Validating paths from 'v5' to 'v2'");
+            foundPath = testGraph.findShortestPath("v5", "v2");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 6);
+            assertEquals(foundPath.getVertices().size(), 3);
+
+            testLogger.info("Finding and Validating paths from 'v5' to 'v3'");
+            foundPath = testGraph.findShortestPath("v5", "v3");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 2);
+            assertEquals(foundPath.getVertices().size(), 2);
+
+            testLogger.info("Finding and Validating paths from 'v5' to 'v5'");
+            foundPath = testGraph.findShortestPath("v5", "v4");
+            logPathAsString(foundPath);
+            assertEquals(foundPath.getCost(), 1);
+            assertEquals(foundPath.getVertices().size(), 2);
+
+            testLogger.info("Validating that a path from 'v5' to itself is not allowed");
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> testGraph.findShortestPath("v5", "v5")
+            );
         }
 
+        @Disabled
         @Test
         void findLongestPath() {
         }
