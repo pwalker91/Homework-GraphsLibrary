@@ -92,10 +92,14 @@ public class Graph implements Serializable {
         );
         Vertex vertexStart = this.getVertex(vertexStartName);
         if (vertexStart == null)
-            throw new IllegalArgumentException("The Vertex "+vertexStartName+" does not exist in this Graph.");
+            throw new IllegalArgumentException(
+                "The Vertex %s does not exist in this Graph.".formatted( vertexStartName )
+            );
         Vertex vertexEnd = this.getVertex(vertexEndName);
         if (vertexEnd == null)
-            throw new IllegalArgumentException("The Vertex "+vertexEndName+" does not exist in this Graph.");
+            throw new IllegalArgumentException(
+                "The Vertex %s does not exist in this Graph.".formatted( vertexEndName )
+            );
         Edge theEdge = this.getEdge(vertexStart, vertexEnd);
         if (theEdge != null) {
             classLogger.debug("Found the Edge. Updating weight and label");
@@ -200,7 +204,7 @@ public class Graph implements Serializable {
         }
         newVertex = new Vertex(newVertexName);
         this.vertices.add(newVertex);
-        classLogger.debug("New Vertex '"+newVertexName+"' added");
+        classLogger.debug("New Vertex '{}' added", newVertexName);
         return newVertex;
     }
     /**

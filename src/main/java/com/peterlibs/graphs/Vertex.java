@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * (content to be added)
+ */
 class Vertex implements Serializable {
 
     static final Logger classLogger = LogManager.getLogger(Vertex.class);

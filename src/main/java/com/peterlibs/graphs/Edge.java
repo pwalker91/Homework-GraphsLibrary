@@ -4,6 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.io.Serializable;
 
+/**
+ * (content to be added)
+ */
 class Edge implements Serializable {
 
     static final Logger classLogger = LogManager.getLogger(Edge.class);
