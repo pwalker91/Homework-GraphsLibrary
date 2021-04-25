@@ -4,13 +4,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 class Vertex implements Serializable {
 
     static final Logger classLogger = LogManager.getLogger(Vertex.class);
     //Instance variables, for recording the edges this Vertex is incident to, specifically
     // where this is the STARTING vertex in the incident pair.
-    private final ArrayList<Edge> edges;
+    final ArrayList<Edge> edges;
     private String label;
 
     /**
@@ -32,15 +34,16 @@ class Vertex implements Serializable {
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      */
 
-    String getLabel() { return label; }
-    protected void setLabel(String label) {
+    public String getLabel() { return label; }
+    void setLabel(String label) {
         if (label == null)
             throw new IllegalArgumentException("Vertex cannot have a 'null' label.");
         this.label = label;
     }
 
-    protected ArrayList<Edge> getEdges() { return this.edges; }
-    protected void addEdge(Edge newEdge) {
+    public List<Edge> getEdges() { return Collections.unmodifiableList(this.edges); }
+    ArrayList<Edge> getEdgesInternal() { return this.edges; }
+    void addEdge(Edge newEdge) {
         if (newEdge == null) {
             classLogger.warn("Given a null Edge object");
             throw new IllegalArgumentException("Cannot add a null Edge object.");
@@ -65,14 +68,14 @@ class Vertex implements Serializable {
         }
         this.edges.add(newEdge);
     }
-    protected void removeEdge(Edge anEdge) { this.edges.remove(anEdge); }
+    void removeEdge(Edge anEdge) { this.edges.remove(anEdge); }
 
     /**
      * Gets the Edge that connects this Vertex to the specified Vertex (if it exists).
      * @param destinationVertex : Vertex object
      * @return An Edge object if it exists, otherwise, null
      */
-    Edge getEdgeToVertex(Vertex destinationVertex) {
+    public Edge getEdgeToVertex(Vertex destinationVertex) {
         if (destinationVertex == null) {
             classLogger.debug("Given destination Vertex is null. No Edge can exist");
             return null;

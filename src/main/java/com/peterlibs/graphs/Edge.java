@@ -52,10 +52,10 @@ class Edge implements Serializable {
      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      */
 
-    String getLabel() { return this.label; }
+    public String getLabel() { return this.label; }
     void setLabel(String newLabel) { this.label = newLabel; }
 
-    int getWeight() { return this.weight; }
+    public int getWeight() { return this.weight; }
     void setWeight(int newWeight) {
         if (newWeight < 0) {
             classLogger.warn(
@@ -67,17 +67,17 @@ class Edge implements Serializable {
         this.weight = newWeight;
     }
 
-    Vertex getVertexStart() { return this.vertexStart; }
+    public Vertex getVertexStart() { return this.vertexStart; }
     /**
      * Sets the given Vertex to be the Edge's new Starting Vertex
      * @param newVertex : A Vertex object. `null` is allowed
      */
-    protected void setVertexStart(Vertex newVertex) { this.vertexStart = newVertex; }
-    Vertex getVertexEnd() { return this.vertexEnd; }
+    void setVertexStart(Vertex newVertex) { this.vertexStart = newVertex; }
+    public Vertex getVertexEnd() { return this.vertexEnd; }
     /**
      * Sets the given Vertex to be the Edge's new Ending Vertex
      * @param newVertex : A Vertex object. `null` is allowed
      */
-    protected void setVertexEnd(Vertex newVertex) { this.vertexEnd = newVertex; }
+    void setVertexEnd(Vertex newVertex) { this.vertexEnd = newVertex; }
 
 }
