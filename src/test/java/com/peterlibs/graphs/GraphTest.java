@@ -220,7 +220,7 @@ class GraphTest {
     }
     private void doTestFindAllPaths(
         Graph aGraph, String vertexStartName, String vertexEndName,
-        int expectedSize
+        int expectedNumPaths
     ) {
         if (vertexStartName.equals(vertexEndName)) {
             testLogger.info("Validating that a path from '{}' to itself is not allowed", vertexStartName);
@@ -238,7 +238,7 @@ class GraphTest {
             for (Path aPath : paths) {
                 logPathAsString(aPath);
             }
-            assertEquals(paths.size(), expectedSize);
+            assertEquals(paths.size(), expectedNumPaths);
         }
     }
     private void doTestFindShortestAllPaths(
@@ -416,9 +416,97 @@ class GraphTest {
             sparseGraph.addEdge("v8", "v4", 5);
         }
 
-        @Disabled
         @Test
         void findAllPaths() {
+            doTestFindAllPaths(sparseGraph, "v1", "v1", -1);
+            doTestFindAllPaths(sparseGraph, "v1", "v2", 1);
+            doTestFindAllPaths(sparseGraph, "v1", "v3", 1);
+            doTestFindAllPaths(sparseGraph, "v1", "v4", 3);
+            doTestFindAllPaths(sparseGraph, "v1", "v5", 1);
+            doTestFindAllPaths(sparseGraph, "v1", "v6", 5);
+            doTestFindAllPaths(sparseGraph, "v1", "v7", 2);
+            doTestFindAllPaths(sparseGraph, "v1", "v8", 2);
+            doTestFindAllPaths(sparseGraph, "v1", "v9", 5);
+
+            doTestFindAllPaths(sparseGraph, "v2", "v1", 0);
+            doTestFindAllPaths(sparseGraph, "v2", "v2", -1);
+            doTestFindAllPaths(sparseGraph, "v2", "v3", 1);
+            doTestFindAllPaths(sparseGraph, "v2", "v4", 2);
+            doTestFindAllPaths(sparseGraph, "v2", "v5", 1);
+            doTestFindAllPaths(sparseGraph, "v2", "v6", 3);
+            doTestFindAllPaths(sparseGraph, "v2", "v7", 1);
+            doTestFindAllPaths(sparseGraph, "v2", "v8", 1);
+            doTestFindAllPaths(sparseGraph, "v2", "v9", 4);
+
+            doTestFindAllPaths(sparseGraph, "v1", "v1", 1);
+            doTestFindAllPaths(sparseGraph, "v3", "v2", 0);
+            doTestFindAllPaths(sparseGraph, "v3", "v3", -1);
+            doTestFindAllPaths(sparseGraph, "v3", "v4", 1);
+            doTestFindAllPaths(sparseGraph, "v3", "v5", 0);
+            doTestFindAllPaths(sparseGraph, "v3", "v6", 2);
+            doTestFindAllPaths(sparseGraph, "v3", "v7", 1);
+            doTestFindAllPaths(sparseGraph, "v3", "v8", 0);
+            doTestFindAllPaths(sparseGraph, "v3", "v9", 1);
+
+            doTestFindAllPaths(sparseGraph, "v4", "v1", 0);
+            doTestFindAllPaths(sparseGraph, "v4", "v2", 0);
+            doTestFindAllPaths(sparseGraph, "v4", "v3", 0);
+            doTestFindAllPaths(sparseGraph, "v4", "v4", -1);
+            doTestFindAllPaths(sparseGraph, "v4", "v5", 0);
+            doTestFindAllPaths(sparseGraph, "v4", "v6", 1);
+            doTestFindAllPaths(sparseGraph, "v4", "v7", 0);
+            doTestFindAllPaths(sparseGraph, "v4", "v8", 0);
+            doTestFindAllPaths(sparseGraph, "v4", "v9", 1);
+
+            doTestFindAllPaths(sparseGraph, "v5", "v1", 0);
+            doTestFindAllPaths(sparseGraph, "v5", "v2", 0);
+            doTestFindAllPaths(sparseGraph, "v5", "v3", 0);
+            doTestFindAllPaths(sparseGraph, "v5", "v4", 1);
+            doTestFindAllPaths(sparseGraph, "v5", "v5", -1);
+            doTestFindAllPaths(sparseGraph, "v5", "v6", 1);
+            doTestFindAllPaths(sparseGraph, "v5", "v7", 0);
+            doTestFindAllPaths(sparseGraph, "v5", "v8", 1);
+            doTestFindAllPaths(sparseGraph, "v5", "v9", 2);
+
+            doTestFindAllPaths(sparseGraph, "v6", "v1", 0);
+            doTestFindAllPaths(sparseGraph, "v6", "v2", 0);
+            doTestFindAllPaths(sparseGraph, "v6", "v3", 0);
+            doTestFindAllPaths(sparseGraph, "v6", "v4", 0);
+            doTestFindAllPaths(sparseGraph, "v6", "v5", 0);
+            doTestFindAllPaths(sparseGraph, "v6", "v6", -1);
+            doTestFindAllPaths(sparseGraph, "v6", "v7", 0);
+            doTestFindAllPaths(sparseGraph, "v6", "v8", 0);
+            doTestFindAllPaths(sparseGraph, "v6", "v9", 0);
+
+            doTestFindAllPaths(sparseGraph, "v7", "v1", 0);
+            doTestFindAllPaths(sparseGraph, "v7", "v2", 0);
+            doTestFindAllPaths(sparseGraph, "v7", "v3", 0);
+            doTestFindAllPaths(sparseGraph, "v7", "v4", 0);
+            doTestFindAllPaths(sparseGraph, "v7", "v5", 0);
+            doTestFindAllPaths(sparseGraph, "v7", "v6", 1);
+            doTestFindAllPaths(sparseGraph, "v7", "v7", -1);
+            doTestFindAllPaths(sparseGraph, "v7", "v8", 0);
+            doTestFindAllPaths(sparseGraph, "v7", "v9", 0);
+
+            doTestFindAllPaths(sparseGraph, "v8", "v1", 0);
+            doTestFindAllPaths(sparseGraph, "v8", "v2", 0);
+            doTestFindAllPaths(sparseGraph, "v8", "v3", 0);
+            doTestFindAllPaths(sparseGraph, "v8", "v4", 1);
+            doTestFindAllPaths(sparseGraph, "v8", "v5", 0);
+            doTestFindAllPaths(sparseGraph, "v8", "v6", 1);
+            doTestFindAllPaths(sparseGraph, "v8", "v7", 0);
+            doTestFindAllPaths(sparseGraph, "v8", "v8", -1);
+            doTestFindAllPaths(sparseGraph, "v8", "v9", 1);
+
+            doTestFindAllPaths(sparseGraph, "v9", "v1", 0);
+            doTestFindAllPaths(sparseGraph, "v9", "v2", 0);
+            doTestFindAllPaths(sparseGraph, "v9", "v3", 0);
+            doTestFindAllPaths(sparseGraph, "v9", "v4", 0);
+            doTestFindAllPaths(sparseGraph, "v9", "v5", 0);
+            doTestFindAllPaths(sparseGraph, "v9", "v6", 0);
+            doTestFindAllPaths(sparseGraph, "v9", "v7", 0);
+            doTestFindAllPaths(sparseGraph, "v9", "v8", 0);
+            doTestFindAllPaths(sparseGraph, "v9", "v9", -1);
         }
 
         @Disabled
