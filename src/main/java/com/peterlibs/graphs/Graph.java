@@ -311,8 +311,6 @@ public class Graph implements Serializable {
     /**
      * Find all possible paths from the Vertex A to Vertex B, regardless of cost.
      * Each path will only use each Vertex once at a maximum.
-     * The search pattern will be using a depth-first search, since we are not interested
-     *  in the shortest path between two vertices.
      * @param vertexStartName : The starting point of our path search
      * @param vertexEndName : The Vertex we wish to reach
      * @return An ArrayList of ArrayList of String or Edge objects.
@@ -346,12 +344,17 @@ public class Graph implements Serializable {
     /**
      *
      * @param vertexStart
-     * @param vertexEnd
+     * @param vertexDestination
      * @param visitedVertices
      * @return
      */
-    private ArrayList<Edge> shortestPathSearchForDestination(Vertex vertexStart, Vertex vertexEnd, ArrayList<Vertex> visitedVertices) {
+    private ArrayList<Edge> shortestPathSearchForDestination(Vertex vertexStart, Vertex vertexDestination, ArrayList<Vertex> visitedVertices) {
+        classLogger.debug(
+            "At vertex '{}', looking for path to vertex '{}'",
+            vertexStart.getLabel(), vertexDestination.getLabel()
+        );
         ArrayList<Edge> foundPath = new ArrayList<>();
+        int lowestTotalCost = -1;
 
         ArrayList<Vertex> newVisitedVertices;
         if (visitedVertices == null)
@@ -359,26 +362,68 @@ public class Graph implements Serializable {
         else
             newVisitedVertices = new ArrayList<>(visitedVertices);
         newVisitedVertices.add(vertexStart);
+        classLogger.trace("Already visited vertices | '{}'", newVisitedVertices);
 
-        //TODO: implement
+        for (Edge anEdge: vertexStart.getEdges()) {
+            classLogger.trace(
+                "Processing Edge '{}' ({} -> {})",
+                anEdge.getLabel(), anEdge.getVertexStart().getLabel(), anEdge.getVertexEnd().getLabel()
+            );
+            //If we have already visited the vertex, skip doing anything more
+            if (newVisitedVertices.contains(anEdge.getVertexEnd())) {
+                classLogger.trace("Edge ends at a Vertex we have already visited. Skipping Edge...");
+                continue;
+            }
 
-        //lowest cost and num hops
-        //same cost and hops?
+            ArrayList<Edge> itsAPath;
+            int thisPathCost = 0;
+            if (anEdge.getVertexEnd() == vertexDestination) {
+                classLogger.trace("Edge ends at our destination. Building a new possible path.");
+                itsAPath = new ArrayList<>();
+                itsAPath.add(anEdge);
+                thisPathCost = anEdge.getWeight();
+            }
+            else {
+                //Add all other found paths from the Edge's End Vertex
+                itsAPath = shortestPathSearchForDestination(
+                    anEdge.getVertexEnd(), vertexDestination, newVisitedVertices
+                );
+                for (Edge pathEdge: itsAPath) { thisPathCost += pathEdge.getWeight(); }
+            }
 
-        //        create a queue Q
-        //        enqueue v onto Q
-        //        mark v
-        //        while Q is not empty do
-        //            w ← Q.dequeue()
-        //            if w is what we are looking for then
-        //                return w
-        //            for all edges e in G.adjacentEdges(w) do
-        //                x ← G.adjacentVertex(w, e)
-        //                if x is not marked then
-        //                    mark x
-        //                    enqueue x onto Q
-        //        return null
-        return null;
+            classLogger.trace("Testing that we have a path to compare with what the current shortest is");
+            if (itsAPath.size() == 0) {
+                classLogger.trace("No path to destination from here. Continuing to next edge");
+                continue;
+            }
+
+            classLogger.trace("Comparing the newly constructed path to what is recorded as the shortest.");
+            classLogger.trace(
+                "Current lowest, size={} cost={} | contender, size={} cost={}",
+                foundPath.size(), lowestTotalCost, itsAPath.size(), thisPathCost
+            );
+            if (
+                lowestTotalCost == -1 ||
+                    thisPathCost < lowestTotalCost ||
+                    (thisPathCost == lowestTotalCost && itsAPath.size() < foundPath.size())
+                //The use case that I am not able to cover here (based on my current class design)
+                // if when a path of the same weight and number of hops is found. The method will
+                // return whichever one it found first, which may not ALWAYS be the same path.
+            ) {
+                classLogger.trace("We currently do not have a valid shortest path, or the newly found path is shorter");
+                foundPath = itsAPath;
+                foundPath.add(0, anEdge);
+                lowestTotalCost = thisPathCost;
+            }
+        }
+        if (lowestTotalCost == -1) {
+            classLogger.debug("No possible path was found to destination");
+            return null;
+        }
+        else {
+            classLogger.debug("Path found. size={} cost={}", foundPath.size(), lowestTotalCost);
+            return foundPath;
+        }
     }
     /**
      * Gets the shortest path between the given start and end vertices.
@@ -408,11 +453,11 @@ public class Graph implements Serializable {
     /**
      *
      * @param vertexStart
-     * @param vertexEnd
+     * @param vertexDestination
      * @param visitedVertices
      * @return
      */
-    private ArrayList<Edge> longestPathSearchForDestination(Vertex vertexStart, Vertex vertexEnd, ArrayList<Vertex> visitedVertices) {
+    private ArrayList<Edge> longestPathSearchForDestination(Vertex vertexStart, Vertex vertexDestination, ArrayList<Vertex> visitedVertices) {
         ArrayList<Edge> foundPath = new ArrayList<>();
 
         ArrayList<Vertex> newVisitedVertices;
