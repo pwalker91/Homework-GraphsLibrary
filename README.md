@@ -53,5 +53,5 @@ Unit tests have been written to test the functionality of the methods in the pro
  - [ ] com.peterlibs.graph.Path
 
 When testing the `Graph` class, the following graphs were used.
-![Dense Graph](https://github.com/pwalker91/Homework-GraphsLibrary/blob/main/src/test/resources/PathsTests-DenseGraph-Diagram.png?raw=true){width=600}
-![Sparse Graph](https://github.com/pwalker91/Homework-GraphsLibrary/blob/main/src/test/resources/PathsTests-SparseGraph-Diagram.png?raw=true){width=600}
+![Dense Graph](https://github.com/pwalker91/Homework-GraphsLibrary/blob/main/src/test/resources/PathsTests-DenseGraph-Diagram.png?raw=true)
+![Sparse Graph](https://github.com/pwalker91/Homework-GraphsLibrary/blob/main/src/test/resources/PathsTests-SparseGraph-Diagram.png?raw=true)
