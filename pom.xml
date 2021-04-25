@@ -6,12 +6,12 @@
 
     <groupId>org.peterlibs</groupId>
     <artifactId>Graphs</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>[5.8.0,)</version>
+            <version>[5.7.0,)</version>
             <scope>test</scope>
         </dependency>
         <dependency>
