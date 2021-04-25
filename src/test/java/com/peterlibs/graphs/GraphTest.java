@@ -509,9 +509,49 @@ class GraphTest {
             doTestFindAllPaths(sparseGraph, "v9", "v9", -1);
         }
 
-        @Disabled
         @Test
         void findShortestPath() {
+//            doTestFindShortestAllPaths(sparseGraph, "v1", "v1", false, -1, -1);
+//            doTestFindShortestAllPaths(sparseGraph, "v1", "v2", true, 0, 0);
+//            doTestFindShortestAllPaths(sparseGraph, "v1", "v3", true, 0, 0);
+//            doTestFindShortestAllPaths(sparseGraph, "v1", "v4", true, 0, 0);
+//            doTestFindShortestAllPaths(sparseGraph, "v1", "v5", true, 0, 0);
+//            doTestFindShortestAllPaths(sparseGraph, "v1", "v6", true, 0, 0);
+//            doTestFindShortestAllPaths(sparseGraph, "v1", "v7", true, 0, 0);
+//            doTestFindShortestAllPaths(sparseGraph, "v1", "v8", true, 0, 0);
+//            doTestFindShortestAllPaths(sparseGraph, "v1", "v9", true, 0, 0);
+
+            //2
+
+            //3
+
+            //4
+
+            //5
+            
+            doTestFindShortestAllPaths(sparseGraph, "v6", "v1", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v6", "v2", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v6", "v3", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v6", "v4", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v6", "v5", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v6", "v6", false, -1, -1);
+            doTestFindShortestAllPaths(sparseGraph, "v6", "v7", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v6", "v8", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v6", "v9", false, 0, 0);
+
+            //7
+
+            //8
+
+            doTestFindShortestAllPaths(sparseGraph, "v9", "v1", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v9", "v2", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v9", "v3", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v9", "v4", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v9", "v5", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v9", "v6", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v9", "v7", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v9", "v8", false, 0, 0);
+            doTestFindShortestAllPaths(sparseGraph, "v9", "v9", false, -1, -1);
         }
 
         @Disabled
