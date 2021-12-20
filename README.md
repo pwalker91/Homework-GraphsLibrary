@@ -48,8 +48,8 @@ int totalCost = shortestPath.getCost();
 # Testing
 Unit tests have been written to test the functionality of the methods in the provided classes. The following classes have complete unit tests
  - [x] com.peterlibs.graph.Graph
- - [ ] com.peterlibs.graph.Vertex
- - [ ] com.peterlibs.graph.Edge
+ - [x] com.peterlibs.graph.Vertex
+ - [x] com.peterlibs.graph.Edge
  - [ ] com.peterlibs.graph.Path
 
 When testing the `Graph` class, the following graphs were used.
